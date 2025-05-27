@@ -1,18 +1,851 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.6.0/default/snipcart.css" />
-  <script async src="https://cdn.snipcart.com/themes/v3.6.0/default/snipcart.js"></script>
+
+<link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.6.0/default/snipcart.css" />
+<script async src="https://cdn.snipcart.com/themes/v3.6.0/default/snipcart.js"></script>
+
+
+  <meta charset="UTF-8">
+  <title>Two Black Cats Comedy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Impact&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #fff; }
+
+    header.main-header {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 56px; /* Adjust to your bar height */
+      background: #401b56;
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      padding: 0 2em;
+      font-family: 'Inter', sans-serif;
+      z-index: 1000;
+      box-shadow: 0 2px 12px rgba(44,30,52,0.07);
+    }
+    .logo {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  padding: 0 0.7em 0 0; /* Optional right space before menu */
+}
+
+.cats-logo {
+  height: 60px;         /* Taller than the bar for the "sit" effect */
+  width: auto;
+  display: block;
+  margin-bottom: 0px; /* Pulls the image down so it sits on the edge */
+  margin-top: 0;
+}
+   
+    .main-nav {
+      display: flex;
+      align-items: center;
+      margin-right: 24px;
+    }
+    .main-nav a {
+      color: #fff;
+      text-decoration: none;
+      padding: 0 22px;
+      font-weight: bold;
+      font-size: 1.07em;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      opacity: 0.93;
+    }
+    .main-nav a:hover {
+      color: #ffdf6c;
+      opacity: 1;
+    }
+    .nav-right {
+      display: flex;
+      align-items: stretch;
+      height: 100%;
+      margin-left: auto; /* Pushes nav-right to far right */
+    }
+    .nav-right a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      padding: 0 24px;
+      text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.03em;
+      background: none;
+      height: 100%;
+      transition: background 0.18s, color 0.18s;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .nav-right a.merch-btn {
+      background: #f3bf0b;
+      color: #000000;
+      font-family: 'Inter', sans-serif;
+      border-radius: 0;
+      box-shadow: none;
+      font-size: 1.09em;
+    }
+    .nav-right a.merch-btn:hover {
+      background: #d69b04;
+      color: #FFFFFF;
+    }
+    .nav-right a:hover {
+      color: #c89f09;
+    }
+    @media (max-width: 900px) {
+      header.main-header {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        background: #411b56;
+        box-shadow: 0 2px 12px rgba(44,30,52,0.07);
+      }
+      .main-nav a, .nav-right a { padding: 0 12px; font-size: 1em; }
+      .logo img { height: 38px; }
+    }
+
+    /* Slider */
+    .slider {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 500px;
+  height: 500px; /* Added for fixed height */
+}
+.slides {
+  display: flex;
+  transition: transform 0.6s ease;
+  height: 100%;
+}
+.slide {
+  position: relative;
+  min-width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.slide .bg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(20px) brightness(0.5);
+  z-index: 1;
+  display: block;
+}
+.slide img {
+  max-width: 100%;
+  max-height: 100%;  /* Added */
+  height: 100%;      /* Added */
+  object-fit: contain;
+  z-index: 2;
+  display: block;    /* Added for extra safety */
+  margin: 0 auto;    /* Center horizontally */
+}
+.slide .cta-button {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e60023;
+  color: white;
+  padding: 0.8em 1.5em;
+  font-size: 1.4em;
+  text-decoration: none;
+  border: none;
+  border-radius: 8px;
+  z-index: 4;
+  cursor: pointer;
+  font-family: Impact, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  box-shadow: 0 3px 24px rgba(65,27,86,0.07);
+  transition: background 0.18s;
+}
+
+    .slide .cta-button:hover { background: #a8001a; }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      color: white;
+      border: none;
+      font-size: 2rem;
+      padding: 0.5em;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .arrow.left { left: 10px; }
+    .arrow.right { right: 10px; }
+    .dots {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 5;
+    }
+    .dots span {
+      display: block;
+      width: 10px;
+      height: 10px;
+      background: #fff;
+      opacity: 0.5;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+    .dots span.active {
+      opacity: 1;
+    }
+
+    /* SHARED PAGE WRAPPER FOR ALIGNMENT */
+    .main-wrapper {
+      max-width: 1900px;
+      margin: 0 auto;
+      padding-left: 1.5em;
+      padding-right: 1.5em;
+    }
+    /* About section */
+    .about-section {
+      margin: 2em 0 0.5em 0;
+      padding: 3em 0 3em 0;
+      background: #fff;
+      width: 100%;
+    }
+    .about-section h1 {
+      font-family: Impact,sans-serif;
+      letter-spacing:1.5px;
+      color:#411b56;
+      font-size:2.5em;
+      text-align:left;
+      margin-bottom:0.4em;
+    }
+    .about-section p {
+      max-width:900px;
+      line-height:1.54;
+      font-size:1.17em;
+      color:#232;
+      text-align:left;
+      font-family:'Inter',sans-serif;
+      margin-bottom:1.1em;
+    }
+    /* Upcoming Shows Header and Instagram Header */
+    .shows-header,
+    .insta-section h2 {
+      font-family: Impact, sans-serif;
+      font-size: 2em;
+      color: #411b56;
+      letter-spacing: 1px;
+      text-align: left;
+      margin-top: 2.5em;
+      margin-bottom: 0.6em;
+      text-shadow: 0 2px 10px #ececec20;
+      padding-left: 0;
+    }
+    /* Event Cards */
+    .shows-section {
+      background: #fff;
+      padding: 1em 0 4em 0;
+      width: 100%;
+    }
+.shows-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(550px, 0px));
+  gap: 2em;
+  width: 100%;
+  margin: 0 auto;
+  justify-items: center;
+  justify-content: center; /* This centers the entire grid row! */
+}
+
+
+    @media (max-width: 1200px) {
+      .shows-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 900px) {
+      .shows-grid { grid-template-columns: 1fr; }
+    }
+    .show-card {
+      width: 550px;
+      max-width: 550px;
+      min-width: 250px;
+      background: #fff;
+      display: flex;
+      flex-direction: row;
+      box-shadow: 0 6px 24px 0 rgba(65,27,86,0.09), 0 0.5px 1.5px 0 rgba(44,30,52,0.07);
+      border: 2px solid #411b56;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0 auto;
+      transition: transform 0.18s, box-shadow 0.2s;
+    }
+    .show-card:hover {
+      transform: translateY(-5px) scale(1.016);
+      box-shadow: 0 14px 30px 0 rgba(65,27,86,0.12), 0 0.5px 1.5px 0 rgba(44,30,52,0.08);
+      border-color: #e60023;
+    }
+    .show-text {
+      width: 50%;
+      min-width: 150px; 
+      max-width: 275px;
+      height: 500px; min-height: 500px; max-height: 500px;
+      padding: 1.1em 0.9em 1em 1.2em;
+      display: flex; flex-direction: column; justify-content: flex-start;
+      position: relative; background: #fff;
+    }
+    .show-title {
+      font-family: Impact, sans-serif;
+      font-size: 1.38em;
+      margin-bottom: 0.7em;
+      letter-spacing: 0.04em;
+      color: #411b56;
+      line-height: 1.1;
+   }
+.desc-scroll {
+  width: 100%;  /* <--- Fix: make this 100% to match parent */
+  height: 350px;
+  max-height: 350px;
+  min-height: 350px;
+  margin-bottom: 0;
+  overflow-y: auto;
+  position: relative;
+  border-radius: 0;
+  background: #fff;
+  box-sizing: border-box;  /* ADD THIS */
+  scrollbar-width: thin;
+  scrollbar-color: #e60023 #eee;
+  padding-right: 10px; /* ADD for scroll space */
+}
+    .desc-scroll::-webkit-scrollbar {
+      width: 8px;
+      background: #f3f3f3;
+    }
+    .desc-scroll::-webkit-scrollbar-thumb {
+      background: #e60023;
+      border-radius: 4px;
+    }
+    .show-text .desc {
+      font-size: 0.98em;
+      line-height: 1.38;
+      color: #212121;
+      margin-bottom: 0;
+    }
+    .show-cta {
+      background: #e60023;
+      color: #fff;
+      font-family: Impact, sans-serif;
+      text-transform: uppercase;
+      font-weight: normal;
+      border: none;
+      border-radius: 4px;
+      text-decoration: none;
+      width: 90%;
+      height: 40px;
+      min-width: 120px;
+      max-width: 240px;
+      max-height: 40px;
+      font-size: 1.08em;
+      letter-spacing: 0.03em;
+      display: block;
+      text-align: center;
+      line-height: 40px;
+      margin: 12px 0 0 0;
+      box-shadow: 0 2px 6px rgba(44,30,52,0.05);
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .show-cta:hover { background: #a8001a; }
+    .show-img {
+      width: 50%; min-width: 100px; max-width: 275px;
+      height: 500px; min-height: 200px; max-height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f7fa;
+      border-left: 2px solid #411b56;
+      overflow: hidden;
+    }
+    .show-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    @media (max-width: 700px) {
+      .show-card { width: 97vw; min-width: 0; max-width: 99vw;}
+      .shows-grid { gap: 1em; }
+      .show-img img { width: 99vw; height: auto; }
+      .show-img { border-left: none; }
+    }
+    /* Instagram Section */
+    .insta-section {
+      margin: 0 0 3.5em 0;
+      padding: 0 0 2em 0;
+      width: 100%;
+    }
+    .insta-grid {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 3px 20px 0 rgba(90,60,110,0.07);
+      margin-bottom: 2em;
+      background: #fff;
+    }
+    /* Footer bar */
+    .footer-bar {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      background: #e6007a;
+      text-align: center;
+      padding: 0.9em 0 0.7em 0;
+      z-index: 200;
+      box-shadow: 0 -2px 10px 0 rgba(100,16,77,0.04);
+      border-top: 2.5px solid #fff;
+    }
+    .footer-link {
+      font-family: Impact, sans-serif;
+      color: #fff;
+      font-size: 1.44em;
+      letter-spacing: 2px;
+      text-decoration: none;
+      font-weight: bold;
+      text-shadow: 0 2px 12px #c234ad40;
+      transition: color 0.15s;
+    }
+    .footer-link:hover {
+      color: #ffdf6c;
+    }
+    /* Scroll To Top Button */
+    .scroll-to-top {
+      position: fixed;
+      bottom: 90px;
+      right: 32px;
+      background: rgba(200,200,200,0.17);
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 210;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.2s, opacity 0.2s;
+      box-shadow: 0 2px 12px 0 rgba(44,30,52,0.07);
+    }
+    .scroll-to-top:hover {
+      background: rgba(200,200,200,0.28);
+    }
+    .chevron-up {
+      display: inline-block;
+      width: 25px;
+      height: 25px;
+      border-style: solid;
+      border-width: 0 0 4px 4px;
+      border-color: transparent transparent #222 #222;
+      transform: rotate(135deg) translateY(-2px);
+      margin-top: 6px;
+    }
+    @media (max-width: 600px) {
+      .scroll-to-top {
+        right: 12px;
+        bottom: 85px;
+        width: 36px;
+        height: 36px;
+      }
+      .chevron-up {
+        width: 18px;
+        height: 18px;
+        border-width: 0 0 3px 3px;
+        margin-top: 4px;
+      }
+      .footer-bar .footer-link {
+        font-size: 1em;
+        letter-spacing: 1px;
+      }
+    }
+ 
+  </style>
 </head>
 <body>
-  <button class="snipcart-add-item"
-    data-item-id="test-1"
-    data-item-name="Test Ticket"
-    data-item-price="10"
-    data-item-url="/"
-    data-item-description="Demo"
-    data-item-quantity="1"
-  >BUY NOW</button>
-  <div hidden id="snipcart" data-api-key="ZmY0MTY0ZTItM2Y4Yy00YzFkLTg5NmQtNjNkMzk4MjhlMWJhNjM4ODM5NjgxMzYxOTQ1MzIy"></div>
+
+<header class="main-header">
+  <div class="logo">
+  <a href="/">
+    <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/cats.png" alt="Two Black Cats" class="cats-logo">
+  </a>
+</div>
+  <nav class="main-nav">
+    <a href="#">Stand-Up</a>
+    <a href="#">Improv</a>
+    <a href="#">Burlesque</a>
+    <a href="#">Drag</a>
+  </nav>
+  <nav class="nav-right">
+    <a href="#" class="merch-btn">Merch</a>
+    <a href="#">Workshops</a>
+    <a href="#">Contact</a>
+  </nav>
+</header>
+
+
+  <!-- Slider -->
+  <div class="slider" id="slider">
+    <div class="slides" id="slides">
+
+      <div class="slide">
+        <div class="bg" style="background-image: url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/pinkcat.png');"></div>
+        <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/pinkcat.png" alt="Pink Cat">
+        <a href="https://instagram.com" class="cta-button">Book Tickets Now</a>
+      </div>
+      <div class="slide">
+        <div class="bg" style="background-image: url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/YellowCat.png');"></div>
+        <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/YellowCat.png" alt="Yellow Cat">
+        <a href="https://facebook.com" class="cta-button">Book Tickets Now</a>
+      </div>
+      <div class="slide">
+        <div class="bg" style="background-image: url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Blackcat.png');"></div>
+        <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Blackcat.png" alt="Black Cat">
+        <a href="https://google.com" class="cta-button">Book Tickets Now</a>
+      </div>
+    </div>
+    <div class="dots" id="dots"></div>
+    <button class="arrow left" onclick="prevSlide()">&#10094;</button>
+    <button class="arrow right" onclick="nextSlide(true)">&#10095;</button>
+  </div>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    <!-- ABOUT SECTION -->
+    <section class="about-section" id="about">
+      <h1>Two Black Cats Comedy</h1>
+      <p>
+        Two Black Cats Comedy is a bold, high-energy entertainment collective serving up a fierce mix of stand-up, improv, burlesque, drag, and workshops that are as unforgettable as they are unapologetic.<br><br>
+        From laugh-out-loud comedy to jaw-dropping performances, our shows are designed to thrill, challenge, and celebrate. Whether you’re here to catch a killer lineup, learn something new, or just get a little weird, we’ve got you covered
+.<br><br>
+      Get your tickets. Bring your friends. Let’s make some chaos.
+    </p>
+  </section>
+
+  <!-- UPCOMING SHOWS HEADER -->
+  <div class="shows-header" id="shows">
+    Upcoming Shows
+  </div>
+
+  <!-- SHOWS GRID -->
+  <section class="shows-section">
+  <div class="shows-grid">
+  <div class="show-card">
+    <div class="show-text">
+      <h3 class="show-title">WOULD I DECEIVE YOU?</h3>
+      <div class="desc-scroll">
+        <p class="desc">This Friday, "WOULD I DECEIVE YOU?" returns once again! Here's some much delayed picks from our first outing at @97notesmalta, in collaboration with their resident comedy club, @caravan.comedy.club. Many thanks to @ed.zepplin for your hospitality. This is a much longer paragraph example to demonstrate scrolling inside the card. This is a much longer paragraph example to demonstrate scrolling inside the card. Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll  Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll ScrollScroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll Scroll</p>
+      </div>
+     <div style="margin-bottom: 8px;">
+  <label for="qty-show-001" style="font-size: 0.96em;">Quantity:</label>
+  <input type="number" id="qty-show-001" value="1" min="1" style="width: 60px; margin-left: 5px;">
+</div>
+<button 
+  class="show-cta snipcart-add-item"
+  data-item-id="show-001"
+  data-item-name="Would I Deceive You? - Comedy Show"
+  data-item-price="18"
+  data-item-url="/"
+  data-item-description="This Friday: Malta's wildest comedy show! General Admission ticket."
+  data-item-quantity="1"
+  onclick="this.setAttribute('data-item-quantity', document.getElementById('qty-show-001').value);"
+>
+  BOOK TICKETS NOW
+</button>
+    </div>
+    <div class="show-img">
+      <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" alt="Would I Deceive You?">
+    </div>
+  </div>
+  <div class="show-card">
+    <div class="show-text">
+      <h3 class="show-title">PURR... DRAG KIKIVISION</h3>
+      <div class="desc-scroll">
+        <p class="desc">Join us this Friday for the most fabulous night of the season. Featuring the best drag performers in a wild, unforgettable night of chaos.</p>
+      </div>
+      <a href="#" class="show-cta">BOOK TICKETS NOW</a>
+    </div>
+    <div class="show-img">
+      <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" alt="Drag Kikivision">
+    </div>
+  </div>
+  <div class="show-card">
+    <div class="show-text">
+      <h3 class="show-title">PURR-TEASE</h3>
+      <div class="desc-scroll">
+        <p class="desc">Celebrate good Friday with dazzling shows, the best burlesque acts and some wicked surprises!</p>
+      </div>
+      <a href="#" class="show-cta">BOOK TICKETS NOW</a>
+    </div>
+    <div class="show-img">
+      <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" alt="Purr-Tease">
+    </div>
+  </div>
+  <div class="show-card">
+    <div class="show-text">
+      <h3 class="show-title">THE BIG INTERNATIONAL WOMAN'S DAY SHOW</h3>
+      <div class="desc-scroll">
+        <p class="desc">We're bringing powerhouse acts to the stage for a night to remember. Join us and discover the inspiring power of the island’s own fierce women!</p>
+      </div>
+      <a href="#" class="show-cta">BOOK TICKETS NOW</a>
+    </div>
+    <div class="show-img">
+      <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" alt="International Woman's Day Show">
+    </div>
+  </div>
+  <div class="show-card">
+    <div class="show-text">
+      <h3 class="show-title">IMPROV BRAWL</h3>
+      <div class="desc-scroll">
+        <p class="desc">A lot of comedy. 2 teams, 1 stage, wild improv. Chaos, wit, and laughter – it's anyone's game.</p>
+      </div>
+      <a href="#" class="show-cta">BOOK TICKETS NOW</a>
+    </div>
+    <div class="show-img">
+      <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" alt="Improv Brawl">
+    </div>
+  </div>
+  <div class="show-card">
+    <div class="show-text">
+      <h3 class="show-title">OPEN MIC STAND-UP</h3>
+      <div class="desc-scroll">
+        <p class="desc">New acts, local legends, and total surprises. Sign up, get on stage, and show us what you got!</p>
+      </div>
+      <a href="#" class="show-cta">BOOK TICKETS NOW</a>
+    </div>
+    <div class="show-img">
+      <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" alt="Open Mic Stand-Up">
+    </div>
+  </div>
+</div>
+
+  </section>
+
+  <!-- INSTAGRAM SECTION -->
+<section class="insta-section" id="instagram">
+    <h2>INSTAGRAM</h2>
+    <div class="insta-grid">
+      <!-- SnapWidget -->
+      <script src="https://snapwidget.com/js/snapwidget.js"></script>
+      <iframe src="https://snapwidget.com/embed/1097512" class="snapwidget-widget" allowtransparency="true" frameborder="0" scrolling="no" style="border:none; overflow:hidden;  width:100%; min-height:400px; " title="Posts from Instagram"></iframe>
+    </div>
+  </section>
+
+  <!-- SCROLL TO TOP BUTTON -->
+  <button id="scrollToTop" class="scroll-to-top" aria-label="Scroll to top">
+    <span class="chevron-up"></span>
+  </button>
+
+  <!-- Pink Footer Bar -->
+<footer class="footer-bar" id="footerBar">
+  <a href="#shows" class="footer-link" id="footerNavLink" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+    <span id="footerArrow">
+      <!-- SVG Down Arrow -->
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 15L18 23L26 15" stroke="#232323" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span id="footerBack" style="display:none;">BACK TO TOP</span>
+  </a>
+</footer>
+
+  <script>
+    // Slider code unchanged from your version...
+    const slides = document.getElementById('slides');
+    const slider = document.getElementById('slider');
+    const slideElements = slides.children;
+    let currentIndex = 0;
+    let autoSlide = true;
+    let isTransitioning = false;
+    let interval;
+    const firstClone = slideElements[0].cloneNode(true);
+    slides.appendChild(firstClone);
+    function updateSlide(index) {
+      isTransitioning = true;
+      slides.style.transition = 'transform 0.6s ease';
+      slides.style.transform = `translateX(-${index * 100}%)`;
+      updateDots();
+    }
+    function nextSlide(manual = false) {
+      if (isTransitioning) return;
+      if (manual) autoSlide = false;
+      currentIndex++;
+      updateSlide(currentIndex);
+    }
+    function prevSlide() {
+      if (isTransitioning) return;
+      autoSlide = false;
+      if (currentIndex === 0) {
+        slides.style.transition = 'none';
+        currentIndex = slideElements.length - 1;
+        slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            currentIndex--;
+            updateSlide(currentIndex);
+          });
+        });
+      } else {
+        currentIndex--;
+        updateSlide(currentIndex);
+      }
+    }
+    slides.addEventListener('transitionend', () => {
+      isTransitioning = false;
+      if (currentIndex === slideElements.length - 1) {
+        slides.style.transition = 'none';
+        currentIndex = 0;
+        slides.style.transform = `translateX(0%)`;
+        updateDots();
+      }
+    });
+    function startAutoSlide() {
+      interval = setInterval(() => {
+        if (autoSlide) nextSlide();
+      }, 3000);
+    }
+    slider.addEventListener('mouseover', () => autoSlide = false);
+    slider.addEventListener('mouseout', () => autoSlide = true);
+    startAutoSlide();
+    // Create navigation dots
+    const dotsContainer = document.getElementById('dots');
+    for (let i = 0; i < slideElements.length - 1; i++) {
+      const dot = document.createElement('span');
+      dot.addEventListener('click', () => {
+        autoSlide = false;
+        currentIndex = i;
+        updateSlide(currentIndex);
+        updateDots();
+      });
+      dotsContainer.appendChild(dot);
+    }
+    function updateDots() {
+      const dots = dotsContainer.children;
+      for (let i = 0; i < dots.length; i++) {
+        dots[i].classList.remove('active');
+      }
+      if (currentIndex === slideElements.length - 1) {
+        dots[0].classList.add('active');
+      } else {
+        dots[currentIndex].classList.add('active');
+      }
+    }
+    updateDots();
+    slides.addEventListener('transitionend', updateDots);
+
+    // Show scroll-to-top after 300px
+    const scrollBtn = document.getElementById('scrollToTop');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 300) {
+        scrollBtn.style.display = 'flex';
+      } else {
+        scrollBtn.style.display = 'none';
+      }
+    });
+    scrollBtn.onclick = function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+<script>
+const navLink = document.getElementById('footerNavLink');
+const arrow = document.getElementById('footerArrow');
+const backText = document.getElementById('footerBack');
+let current = 'shows';
+
+function scrollToSection(id) {
+  if (id === 'top') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+  const el = document.getElementById(id);
+  if(el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+navLink.addEventListener('click', function(e) {
+  e.preventDefault();
+  if (current === 'shows') {
+    scrollToSection('shows');
+    arrow.style.display = '';
+    backText.style.display = 'none';
+    current = 'instagram';
+  } else if (current === 'instagram') {
+    scrollToSection('instagram');
+    arrow.style.display = 'none';
+    backText.style.display = '';
+    current = 'top';
+  } else {
+    scrollToSection('top');
+    arrow.style.display = '';
+    backText.style.display = 'none';
+    current = 'shows';
+  }
+});
+
+window.addEventListener('scroll', function() {
+  const about = document.getElementById('about');
+  const shows = document.getElementById('shows');
+  const instagram = document.getElementById('instagram');
+  const scrollPos = window.scrollY;
+  const winH = window.innerHeight;
+  function offsetTop(el) {
+    return el ? el.getBoundingClientRect().top + window.scrollY : 0;
+  }
+  function sectionMid(el) {
+    return offsetTop(el) + (el.offsetHeight / 2);
+  }
+  if(scrollPos + winH/2 < sectionMid(shows)) {
+    arrow.style.display = '';
+    backText.style.display = 'none';
+    current = 'shows';
+  }
+  else if(scrollPos + winH/2 >= sectionMid(shows) && scrollPos + winH/2 < sectionMid(instagram)) {
+    arrow.style.display = '';
+    backText.style.display = 'none';
+    current = 'instagram';
+  }
+  else if(scrollPos + winH/2 >= sectionMid(instagram)) {
+    arrow.style.display = 'none';
+    backText.style.display = '';
+    current = 'top';
+  }
+});
+</script>
+
+
+<div hidden id="snipcart" data-api-key="ZmY0MTY0ZTItM2Y4Yy00YzFkLTg5NmQtNjNkMzk4MjhlMWJhNjM4ODM5NjgxMzYxOTQ1MzIy"></div>
+
 </body>
 </html>
