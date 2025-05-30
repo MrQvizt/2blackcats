@@ -2,7 +2,7 @@
       --purple: #421c52;
       --yellow: #f7c948;
       --white: #fff;
-      --menu-height: 68px;
+      --menu-height: 48px;
       --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
     }
 
@@ -36,6 +36,30 @@
   display: block;
 }
 
+.cat-logo-img {
+  height: 110px;         /* Make the cats bigger (adjust as you like) */
+  width: auto;
+  display: block;
+  margin-bottom: 0px;  
+  margin-top: 0;
+  z-index: 1020;         /* Ensure it's above nav if needed */
+  position: relative;
+  transition: height 0.3s, margin-bottom 0.3s;
+}
+
+@media (max-width: 900px) {
+  .cat-logo-img {
+    height: 68px;       /* Resize for tablet/smaller screens */
+    margin-bottom: -16px;
+  }
+}
+@media (max-width: 600px) {
+  .cat-logo-img {
+    height: 46px;       /* Smaller on mobile */
+    margin-bottom: -10px;
+  }
+}
+
     .logo-text {
       color: var(--white);
       font-weight: bold;
@@ -48,7 +72,7 @@
       width: 100%;
       justify-content: space-between;
       align-items: center;
-      margin-left: 40px;
+      margin-left: 0px;
       margin-right: 40px;
     }
     .nav-group {
