@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+// FONTS 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Impact&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Lato:700,900&display=swap" rel="stylesheet">
+
+
   <link rel="stylesheet" href="styles.css">
   <script>
     window.SnipcartSettings = {
@@ -17,6 +27,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+
 <header class="header">
     <!-- LOGO (optional) -->
  <div class="logo">
@@ -60,6 +71,7 @@
     </div>
   </header>
 
+<!-- Slider -->
 <div class="slider" id="slider">
   <div class="slides" id="slides">
     <div class="slide">
@@ -79,8 +91,8 @@
     </div>
   </div>
   <div class="dots" id="dots"></div>
-  <button class="arrow left" id="arrow-left" aria-label="Previous slide">&#10094;</button>
-  <button class="arrow right" id="arrow-right" aria-label="Next slide">&#10095;</button>
+  <button class="arrow left" onclick="prevSlide()">&#10094;</button>
+  <button class="arrow right" onclick="nextSlide(true)">&#10095;</button>
 </div>
 
 <div class="main-wrapper">
@@ -94,104 +106,273 @@
   </section>
 
   <div class="shows-header" id="shows">Upcoming Shows</div>
-  <section class="shows-section">
+<div class="event-cards-bg"> 
+ <section class="shows-section">
+<div class="date-picker-bar">
+  <label for="event-range" style="font-weight: 600; margin-right: 0.5em;">Pick a Period:</label>
+  <input id="event-range" type="text" placeholder="DATE" readonly />
+  <button id="show-all-dates" type="button">Show All</button>
+</div>
+
+// EVENT CARD 1 
     <div class="shows-grid">
-      <div class="show-card">
-  <div class="show-text">
-    <h3 class="show-title">WOULD I DECEIVE YOU?</h3>
-    <div class="desc-scroll">
-      <p class="desc">
-        This Friday, "WOULD I DECEIVE YOU?" returns once again! Here's some much delayed picks from our first outing at @97notesmalta, in collaboration with their resident comedy club, @caravan.comedy.club. Many thanks to @ed.zepplin for your hospitality. This is a much longer paragraph example to demonstrate scrolling inside the card. ...
-      </p>
-    </div>
-    <div style="margin-bottom: 8px;">
-      <label for="qty-show-001" style="font-size: 0.96em;">Quantity:</label>
-      <input type="number" id="qty-show-001" value="1" min="1" style="width: 60px; margin-left: 5px;">
+<div class="event-card" data-event-date="2025-06-01">
+  <div class="event-date">
+    <span class="event-month">JUN</span>
+    <span class="event-day">1</span>
+    <span class="event-weekday">TUE</span>
+  </div>
+  <div class="event-img" style="background-image: url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Broulesque.png');"></div>
+  <div class="event-info">
+    <div class="event-title">BURLESQUE: LIKE NEVER BEFORE</div>
+    <div class="event-meta vertical">
+      <span class="event-time event-pill">
+        <!-- Clock SVG -->
+        <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Time">
+          <circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"/>
+          <path d="M10 5V10L13 12" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        6:00 PM
+      </span>
+      <span class="event-location event-pill">
+        <!-- Location SVG -->
+        <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Location">
+          <path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"/>
+          <circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"/>
+        </svg>
+        <a href="https://www.facebook.com/TigullioClub/" target="_blank" rel="noopener">Tgullio</a>
+      </span>
     </div>
     <button 
-      class="show-cta snipcart-add-item"
-      data-item-id="show-001"
-      data-item-name="Would I Deceive You? - Comedy Show"
+      class="event-cta snipcart-add-item"
+      data-item-id="BURLESQUE-LIKE-NEVER-BEFORE"
+      data-item-name="BURLESQUE: LIKE NEVER BEFORE"
       data-item-price="18"
       data-item-url="/"
-      data-item-description="This Friday: Malta's wildest comedy show! General Admission ticket."
+      data-item-custom1-name="Description"
+  data-item-custom1-value="1st JUNE | 6:00 PM | SOHO the Strand"
+  data-item-custom1-readonly="true"
       data-item-quantity="1"
-      onclick="this.setAttribute('data-item-quantity', document.getElementById('qty-show-001').value);"
     >
-      BOOK TICKETS NOW
+      GET TICKETS
     </button>
   </div>
-  <div class="show-img">
-    <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" alt="Would I Deceive You?">
+</div>
+
+<div class="event-card" data-event-date="2025-06-22">
+  <div class="event-date">
+    <span class="event-month">JUN</span>
+    <span class="event-day">22</span>
+    <span class="event-weekday">SUN</span>
+  </div>
+  <div class="event-img" style="background-image: url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Openmic.png');"></div>
+  <div class="event-info">
+    <div class="event-title">OPEM MIC by Niti Dhingra</div>
+   <div class="event-meta vertical">
+  <span class="event-time event-pill">
+        <!-- Clock SVG -->
+        <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Time">
+          <circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"/>
+          <path d="M10 5V10L13 12" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        6:00 PM
+      </span>
+      <span class="event-location event-pill">
+        <!-- Location SVG -->
+        <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Location">
+          <path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"/>
+          <circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"/>
+        </svg>
+        SOHO the Strand
+      </span>
+
+</div>
+   <button 
+  class="event-cta snipcart-add-item"
+  data-item-id="event-sketch-city-2024-06-01"
+  data-item-name="Sketch and the City"
+  data-item-price="18"
+  data-item-url="/"
+  data-item-description="General Admission ticket for Sketch and the City, June 1st at Mainstage."
+  data-item-quantity="1"
+>
+  GET TICKETS
+</button>
   </div>
 </div>
 
-<div class="show-card">
-  <div class="show-text">
-    <h3 class="show-title">PURR... DRAG KIKIVISION</h3>
-    <div class="desc-scroll">
-      <p class="desc">Join us this Friday for the most fabulous night of the season. Featuring the best drag performers in a wild, unforgettable night of chaos.</p>
-    </div>
-    <a href="#" class="show-cta">BOOK TICKETS NOW</a>
+
+<div class="event-card" data-event-date="2025-06-28">
+  <div class="event-date">
+    <span class="event-month">JUN</span>
+    <span class="event-day">28</span>
+    <span class="event-weekday">SAT</span>
   </div>
-  <div class="show-img">
-    <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" alt="Drag Kikivision">
+  <div class="event-img" style="background-image: url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/dragshow.png');"></div>
+  <div class="event-info">
+    <div class="event-title">DRAG SHOW: Fiercer Than Ever</div>
+<div class="event-meta vertical">
+  <span class="event-time event-pill">
+        <!-- Clock SVG -->
+        <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Time">
+          <circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"/>
+          <path d="M10 5V10L13 12" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        6:00 PM
+      </span>
+      <span class="event-location event-pill">
+        <!-- Location SVG -->
+        <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Location">
+          <path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"/>
+          <circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"/>
+        </svg>
+        The Royal British Legion
+      </span>
+
+</div>
+   <button 
+  class="event-cta snipcart-add-item"
+  data-item-id="event-sketch-city-2024-06-01"
+  data-item-name="Sketch and the City"
+  data-item-price="18"
+  data-item-url="/"
+  data-item-description="General Admission ticket for Sketch and the City, June 1st at Mainstage."
+  data-item-quantity="1"
+>
+  GET TICKETS
+</button>
   </div>
 </div>
 
-<div class="show-card">
-  <div class="show-text">
-    <h3 class="show-title">PURR-TEASE</h3>
-    <div class="desc-scroll">
-      <p class="desc">Celebrate good Friday with dazzling shows, the best burlesque acts and some wicked surprises!</p>
-    </div>
-    <a href="#" class="show-cta">BOOK TICKETS NOW</a>
+<div class="event-card" data-event-date="2025-07-01">
+  <div class="event-date">
+    <span class="event-month">JUL</span>
+    <span class="event-day">1</span>
+    <span class="event-weekday">TUE</span>
   </div>
-  <div class="show-img">
-    <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" alt="Purr-Tease">
+  <div class="event-img" style="background-image: url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Standup.png');"></div>
+  <div class="event-info">
+    <div class="event-title">STANDUP COMEDY By Niti Dhingra</div>
+    <div class="event-meta vertical">
+     <span class="event-time event-pill">
+        <!-- Clock SVG -->
+        <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Time">
+          <circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"/>
+          <path d="M10 5V10L13 12" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        6:00 PM
+      </span>
+      <span class="event-location event-pill">
+        <!-- Location SVG -->
+        <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Location">
+          <path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"/>
+          <circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"/>
+        </svg>
+        Note97
+      </span>
+
+    </div>
+   <button 
+  class="event-cta snipcart-add-item"
+  data-item-id="event-sketch-city-2024-06-01"
+  data-item-name="Sketch and the City"
+  data-item-price="18"
+  data-item-url="/"
+  data-item-description="General Admission ticket for Sketch and the City, June 1st at Mainstage."
+  data-item-quantity="1"
+>
+  GET TICKETS
+</button>
   </div>
 </div>
 
-<div class="show-card">
-  <div class="show-text">
-    <h3 class="show-title">THE BIG INTERNATIONAL WOMAN'S DAY SHOW</h3>
-    <div class="desc-scroll">
-      <p class="desc">We're bringing powerhouse acts to the stage for a night to remember. Join us and discover the inspiring power of the island’s own fierce women!</p>
-    </div>
-    <a href="#" class="show-cta">BOOK TICKETS NOW</a>
+<div class="event-card" data-event-date="2025-07-11">
+  <div class="event-date">
+    <span class="event-month">JUL</span>
+    <span class="event-day">11</span>
+    <span class="event-weekday">FRI</span>
   </div>
-  <div class="show-img">
-    <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" alt="International Woman's Day Show">
+  <div class="event-img" style="background-image: url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/improv.png');"></div>
+  <div class="event-info">
+    <div class="event-title">LIVE TONIGHT IMPROV</div>
+    <div class="event-meta vertical">
+     <span class="event-time event-pill">
+        <!-- Clock SVG -->
+        <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Time">
+          <circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"/>
+          <path d="M10 5V10L13 12" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        6:00 PM
+      </span>
+      <span class="event-location event-pill">
+        <!-- Location SVG -->
+        <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Location">
+          <path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"/>
+          <circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"/>
+        </svg>
+        <a href="https://g.co/kgs/RmEFW3W">Tgullio</a>
+      </span>
+
+    </div>
+   <button 
+  class="event-cta snipcart-add-item"
+  data-item-id="event-sketch-city-2024-06-01"
+  data-item-name="Sketch and the City"
+  data-item-price="18"
+  data-item-url="/"
+  data-item-description="General Admission ticket for Sketch and the City, June 1st at Mainstage."
+  data-item-quantity="1"
+>
+  GET TICKETS
+</button>
   </div>
 </div>
 
-<div class="show-card">
-  <div class="show-text">
-    <h3 class="show-title">IMPROV BRAWL</h3>
-    <div class="desc-scroll">
-      <p class="desc">A lot of comedy. 2 teams, 1 stage, wild improv. Chaos, wit, and laughter – it's anyone's game.</p>
-    </div>
-    <a href="#" class="show-cta">BOOK TICKETS NOW</a>
+<div class="event-card" data-event-date="2025-07-12">
+  <div class="event-date">
+    <span class="event-month">JUL</span>
+    <span class="event-day">12</span>
+    <span class="event-weekday">SAT</span>
   </div>
-  <div class="show-img">
-    <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" alt="Improv Brawl">
-  </div>
-</div>
+  <div class="event-img" style="background-image: url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png');"></div>
+  <div class="event-info">
+    <div class="event-title">STANDUP SHOW</div>
+   <div class="event-meta vertical">
+   <span class="event-time event-pill">
+        <!-- Clock SVG -->
+        <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Time">
+          <circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"/>
+          <path d="M10 5V10L13 12" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        6:00 PM
+      </span>
+      <span class="event-location event-pill">
+        <!-- Location SVG -->
+        <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-label="Location">
+          <path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"/>
+          <circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"/>
+        </svg>
+        Note97
+      </span>
 
-<div class="show-card">
-  <div class="show-text">
-    <h3 class="show-title">OPEN MIC STAND-UP</h3>
-    <div class="desc-scroll">
-      <p class="desc">New acts, local legends, and total surprises. Sign up, get on stage, and show us what you got!</p>
     </div>
-    <a href="#" class="show-cta">BOOK TICKETS NOW</a>
-  </div>
-  <div class="show-img">
-    <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" alt="Open Mic Stand-Up">
+   <button 
+  class="event-cta snipcart-add-item"
+  data-item-id="event-sketch-city-2024-06-01"
+  data-item-name="Sketch and the City"
+  data-item-price="18"
+  data-item-url="/"
+  data-item-description="General Admission ticket for Sketch and the City, June 1st at Mainstage."
+  data-item-quantity="1"
+>
+  GET TICKETS
+</button>
   </div>
 </div>
     </div>
+
   </section>
+
 </div>
 
 <section class="insta-section" id="instagram">
