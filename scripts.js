@@ -407,3 +407,46 @@ if (map) {
   grid.appendChild(frag);
 })();
 
+
+// === Snipcart cart badge in header =======================================
+(() => {
+  const link = document.getElementById('site-cart-link');
+  if (!link) return;
+  const badge = link.querySelector('.cart-badge');
+
+  function update(count){
+    if (!badge) return;
+    badge.textContent = count;
+    badge.hidden = !(count > 0);
+    link.hidden = !(count > 0);
+  }
+
+  function setup(){
+    try {
+      // Snipcart v3 store subscription
+      const initState = window.Snipcart?.store?.getState?.();
+      if (initState) {
+        const initial = initState.cart?.items?.count || 0;
+        update(initial);
+        window.Snipcart.store.subscribe((state) => {
+          const c = state.cart?.items?.count || 0;
+          update(c);
+        });
+        return;
+      }
+    } catch(_) {}
+
+    // Fallback: listen to add/remove events
+    if (window.Snipcart?.events) {
+      let c = 0;
+      update(c);
+      window.Snipcart.events.on('item.added', () => update(++c));
+      window.Snipcart.events.on('item.removed', () => update(Math.max(0, --c)));
+      window.Snipcart.events.on('cart.confirmed', () => update(0));
+    }
+  }
+
+  if (window.Snipcart?.store) setup();
+  else document.addEventListener('snipcart.ready', setup);
+})();
+
