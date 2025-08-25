@@ -407,3 +407,42 @@ if (map) {
   grid.appendChild(frag);
 })();
 
+// === Cart badge + color sync (white when 0, yellow when >0) ===============
+(() => {
+  const desktopBtn  = document.getElementById('cartButton');
+  const desktopCnt  = document.getElementById('cartCount');
+  const mobileBtn   = document.getElementById('cartButtonMobile');
+  const mobileCnt   = document.getElementById('cartCountMobile');
+
+  function applyState(btn, cnt){
+    if (!btn || !cnt) return;
+    const n = parseInt((cnt.textContent || '0').replace(/[^0-9]/g,''), 10) || 0;
+    btn.classList.toggle('has-items', n > 0);
+    const label = `Open cart (${n} item${n===1?'':'s'})`;
+    btn.setAttribute('aria-label', label);
+  }
+
+  // Observe Snipcart-driven updates to the .snipcart-items-count span(s)
+  const obsCfg = { characterData: true, childList: true, subtree: true };
+  const observers = [];
+  if (desktopCnt) {
+    const mo = new MutationObserver(() => applyState(desktopBtn, desktopCnt));
+    mo.observe(desktopCnt, obsCfg);
+    observers.push(mo);
+  }
+  if (mobileCnt) {
+    const mo = new MutationObserver(() => applyState(mobileBtn, mobileCnt));
+    mo.observe(mobileCnt, obsCfg);
+    observers.push(mo);
+  }
+
+  // Initial paint
+  applyState(desktopBtn, desktopCnt);
+  applyState(mobileBtn, mobileCnt);
+
+  // Also hook into Snipcart lifecycle if available to force a refresh
+  window.addEventListener('snipcart.ready', () => {
+    applyState(desktopBtn, desktopCnt);
+    applyState(mobileBtn, mobileCnt);
+  });
+})();
