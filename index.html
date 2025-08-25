@@ -72,14 +72,19 @@
 <a class="nav-link merch" href="#merch">Merch</a>
 <a class="nav-link" href="#workshops">Workshops</a>
 <a class="nav-link" href="#contact">Contact</a>
-<button class="nav-link cart-link snipcart-checkout" id="cartButtonMobile" aria-label="Open cart (0 items)">
-  <svg class="cart-icon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M6 6h.5l2.1 8.4a2 2 0 0 0 2 1.6h6.3a2 2 0 0 0 2-1.6L20 9H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="9" cy="21" r="1.5" fill="currentColor"/>
-    <circle cx="17" cy="21" r="1.5" fill="currentColor"/>
-  </svg>
-  <span class="cart-count snipcart-items-count" id="cartCountMobile" aria-live="polite" aria-atomic="true">0</span>
+<button class="nav-link cart-link snipcart-checkout" id="cartButton" aria-label="Open cart (0 items)">
+  <span class="cart-icon-wrap">
+    <svg class="cart-icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 6h.5l2.1 8.4a2 2 0 0 0 2 1.6h6.3a2 2 0 0 0 2-1.6L20 9H8"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="9" cy="21" r="1.5" fill="currentColor"/>
+      <circle cx="17" cy="21" r="1.5" fill="currentColor"/>
+    </svg>
+    <span class="cart-count snipcart-items-count" id="cartCount"
+          aria-live="polite" aria-atomic="true">0</span>
+  </span>
 </button>
+
 </nav>
 </header>
 <!-- Hero slider -->
