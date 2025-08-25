@@ -450,3 +450,50 @@ if (map) {
   else document.addEventListener('snipcart.ready', setup);
 })();
 
+
+// === Snipcart minimal auto-populate (standalone, fill-only) ==============
+(function(){
+  function fillFromCard(card){
+    const btn = card.querySelector('.snipcart-add-item');
+    if (!btn) return;
+
+    const title = (card.getAttribute('data-title') || card.querySelector('.event-title')?.textContent || 'Event').trim();
+    const iso   = (card.getAttribute('data-event-date') || '').trim();
+    const price = (card.getAttribute('data-price') || '').replace(/[^0-9.]/g,'');
+    const time  = (card.getAttribute('data-time') || '').trim();
+    const loc   = (card.getAttribute('data-location') || '').trim();
+
+    const slug  = title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+    const uid   = (slug && iso) ? `${slug}-${iso.replaceAll('-','')}` : (slug || `event-${Math.random().toString(36).slice(2)}`);
+
+    if (!btn.getAttribute('data-item-id'))    btn.setAttribute('data-item-id', uid);
+    if (!btn.getAttribute('data-item-name'))  btn.setAttribute('data-item-name', title);
+    if (!btn.getAttribute('data-item-price') && price) btn.setAttribute('data-item-price', price);
+    if (!btn.getAttribute('data-item-url'))   btn.setAttribute('data-item-url', (location.origin || '') + (location.pathname || '/') + '#' + uid);
+
+    if (!btn.getAttribute('data-item-description')) {
+      let pretty = '';
+      if (iso) {
+        const d = new Date(iso + 'T12:00:00');
+        const M = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+        if (!isNaN(d)) pretty = `${d.getUTCDate()} ${M[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+      }
+      const desc = [title, pretty && `| ${pretty}`, time && `| ${time}`, loc && `| ${loc}`].filter(Boolean).join(' ');
+      if (desc) btn.setAttribute('data-item-description', desc);
+    }
+
+    if (!btn.getAttribute('data-item-quantity')) btn.setAttribute('data-item-quantity','2');
+  }
+
+  document.querySelectorAll('.event-card').forEach(fillFromCard);
+
+  // Defensive: ensure attrs exist if user clicks before JS finished
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.snipcart-add-item');
+    if (!btn) return;
+    const card = btn.closest('.event-card');
+    if (card) fillFromCard(card);
+  });
+})();
+// ========================================================================
+
