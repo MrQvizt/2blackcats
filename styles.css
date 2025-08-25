@@ -755,3 +755,35 @@ event-modal-meta{
   max-width: 100% !important;
   width: 100% !important;
 }
+
+
+/* === Snipcart: ensure cart is on top of everything === */
+#snipcart,
+.snipcart {
+  position: relative;
+  z-index: 100000 !important; /* above header/footer/modals */
+}
+
+/* Overlay should cover the whole viewport and sit above site UI */
+.snipcart-modal__overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 100001 !important;
+}
+
+/* Side cart container */
+.snipcart-cart--opened,
+.snipcart-cart__content {
+  z-index: 100002 !important;
+}
+
+/* Prevent site header from overlapping when cart slides under it */
+.snipcart-cart__content {
+  top: 0 !important;
+}
+
+/* Optional: make the backdrop slightly darker for contrast with your purple header */
+.snipcart-modal__overlay {
+  background: rgba(0, 0, 0, 0.55) !important;
+}
+
