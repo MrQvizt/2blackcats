@@ -1,123 +1,372 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <title>Two Black Cats Comedy</title>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<!-- Flatpickr (date range) -->
 <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- Google Fonts -->
+<!-- Inter (UI), Lato (headings/buttons), Impact (CTA style) -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Impact&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css?family=Lato:700,900&amp;display=swap" rel="stylesheet"/>
+<!-- Snipcart (payments) -->
 <script>
-  window.SnipcartSettings = {
-    publicApiKey: "ZmY0MTY0ZTItM2Y4Yy00YzFkLTg5NmQtNjNkMzk4MjhlMWJhNjM4ODM5NjgxMzYxOTQ1MzIy",
-    loadStrategy: "on-user-interaction",
-    modalStyle: "side"
-  };
-</script>
+    // Snipcart settings
+    window.SnipcartSettings = {
+      publicApiKey: "ZmY0MTY0ZTItM2Y4Yy00YzFkLTg5NmQtNjNkMzk4MjhlMWJhNjM4ODM5NjgxMzYxOTQ1MzIy",
+      loadStrategy: "on-user-interaction",
+      modalStyle: "side"
+    };
+  </script>
 <link href="https://cdn.snipcart.com/themes/v3.6.0/default/snipcart.css" rel="stylesheet">
-<script async src="https://cdn.snipcart.com/themes/v3.6.0/default/snipcart.js"></script>
+<script async="" src="https://cdn.snipcart.com/themes/v3.6.0/default/snipcart.js"></script>
+<!-- Site CSS -->
 <link href="styles.css" rel="stylesheet">
-</head>
+</link></link></head>
 <body>
+<!-- Skip link for accessibility -->
 <a class="skip-link" href="#shows">Skip to Upcoming Shows</a>
 <header class="header">
-  <div class="logo">
-    <img alt="Two Black Cats" class="cat-logo-img" src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/cats.png"/>
-  </div>
-  <nav aria-label="Main" class="nav">
-    <div class="nav-group" id="nav-left">
-      <a class="nav-link" href="#shows">Shows</a>
-      <a class="nav-link" href="#standup">Stand-up</a>
-      <a class="nav-link" href="#improv">Improv</a>
-      <a class="nav-link" href="#burlesque">Burlesque</a>
-      <a class="nav-link" href="#drag">Drag</a>
-    </div>
-    <div class="nav-group" id="nav-right">
-      <a class="nav-link merch" href="#merch">Merch</a>
-      <a class="nav-link" href="#workshops">Workshops</a>
-      <a class="nav-link" href="#contact">Contact</a>
-      <button class="nav-link cart-link snipcart-checkout" id="cartButton" aria-label="Open cart (0 items)">
-        <span class="cart-icon-wrap">
-          <svg class="cart-icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M6 6h.5l2.1 8.4a2 2 0 0 0 2 1.6h6.3a2 2 0 0 0 2-1.6L20 9H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="9" cy="21" r="1.5" fill="currentColor"/>
-            <circle cx="17" cy="21" r="1.5" fill="currentColor"/>
-          </svg>
-          <span class="cart-count snipcart-items-count" id="cartCount" aria-live="polite" aria-atomic="true">0</span>
-        </span>
-      </button>
-    </div>
-  </nav>
-  <button aria-controls="slideMenu" aria-expanded="false" aria-label="Open navigation" class="hamburger" id="hamburger">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="slide-menu-bg" hidden id="slideMenuBg"></div>
-  <nav aria-label="Mobile Navigation" class="slide-menu" hidden id="slideMenu">
-    <a class="nav-link" href="#shows">Shows</a>
-    <a class="nav-link" href="#standup">Stand-up</a>
-    <a class="nav-link" href="#improv">Improv</a>
-    <a class="nav-link" href="#burlesque">Burlesque</a>
-    <a class="nav-link" href="#drag">Drag</a>
-    <a class="nav-link merch" href="#merch">Merch</a>
-    <a class="nav-link" href="#workshops">Workshops</a>
-    <a class="nav-link" href="#contact">Contact</a>
-    <button class="nav-link cart-link snipcart-checkout" id="cartButtonMobile" aria-label="Open cart (0 items)">
-      <span class="cart-icon-wrap">
-        <svg class="cart-icon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 6h.5l2.1 8.4a2 2 0 0 0 2 1.6h6.3a2 2 0 0 0 2-1.6L20 9H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="9" cy="21" r="1.5" fill="currentColor"/>
-          <circle cx="17" cy="21" r="1.5" fill="currentColor"/>
-        </svg>
-        <span class="cart-count snipcart-items-count" id="cartCountMobile" aria-live="polite" aria-atomic="true">0</span>
-      </span>
-    </button>
-  </nav>
-</header>
-
-<!-- (rest of page unchanged as before) -->
-<section aria-label="Featured" class="slider" id="slider">
-  <div aria-live="polite" class="slides" id="slides">
-    <div class="slide">
-      <div class="bg" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/pinkcat.png')"></div>
-      <img alt="Promotional artwork: Pink Cat" src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/pinkcat.png"/>
-      <a class="cta-button" href="#shows">Book Tickets Now</a>
-    </div>
-    <div class="slide">
-      <div class="bg" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/YellowCat.png')"></div>
-      <img alt="Promotional artwork: Yellow Cat" src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/YellowCat.png"/>
-      <a class="cta-button" href="#shows">Book Tickets Now</a>
-    </div>
-    <div class="slide">
-      <div class="bg" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Blackcat.png')"></div>
-      <img alt="Promotional artwork: Black Cat" src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Blackcat.png"/>
-      <a class="cta-button" href="#shows">Book Tickets Now</a>
-    </div>
-  </div>
-  <div aria-label="Slide indicators" class="dots" id="dots"></div>
-  <button aria-label="Previous slide" class="arrow left" onclick="prevSlide()" type="button">←</button>
-  <button aria-label="Next slide" class="arrow right" onclick="nextSlide(true)" type="button">→</button>
-</section>
-
-<main class="main-wrapper">
-  <section class="about-section" id="about">
-    <h1>Two Black Cats Comedy</h1>
-    <p>Two Black Cats Comedy is a bold, high-energy entertainment collective serving up a fierce mix of stand-up, improv, burlesque, drag, and workshops that are as unforgettable as they are unapologetic.
-    From laugh-out-loud comedy to jaw-dropping performances, our shows are designed to thrill, challenge, and celebrate. Whether you’re here to catch a killer lineup, learn something new, or just get a little weird, we’ve got you covered.
-    Get your tickets. Bring your friends. Let’s make some chaos.</p>
-  </section>
-  <!-- Shows and rest identical to previous full version omitted for brevity -->  
-</main>
-
-<div class="event-modal" hidden id="event-modal">
-  <div aria-labelledby="eventModalTitle" aria-modal="true" class="event-modal-content" role="dialog">
-    <button aria-label="Close" class="event-modal-close" id="event-modal-close">×</button>
-    <div id="event-modal-body"></div>
-  </div>
+<!-- Logo -->
+<div class="logo">
+<img alt="Two Black Cats" class="cat-logo-img" src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/cats.png"/>
 </div>
-
-<div data-api-key="ZmY0MTY0ZTItM2Y4Yy00YzFkLTg5NmQtNjNkMzk4MjhlMWJhNjM4ODM5NjgxMzYxOTQ1MzIy" hidden id="snipcart"></div>
+<!-- Desktop nav -->
+<nav aria-label="Main" class="nav">
+<div class="nav-group" id="nav-left">
+<a class="nav-link" href="#shows">Shows</a>
+<a class="nav-link" href="#standup">Stand-up</a>
+<a class="nav-link" href="#improv">Improv</a>
+<a class="nav-link" href="#burlesque">Burlesque</a>
+<a class="nav-link" href="#drag">Drag</a>
+</div>
+<div class="nav-group" id="nav-right">
+<a class="nav-link merch" href="#merch">Merch</a>
+<a class="nav-link" href="#workshops">Workshops</a>
+<a class="nav-link" href="#contact">Contact</a>
+<button class="nav-link cart-link snipcart-checkout" id="cartButton" aria-label="Open cart (0 items)">
+  <svg class="cart-icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M6 6h.5l2.1 8.4a2 2 0 0 0 2 1.6h6.3a2 2 0 0 0 2-1.6L20 9H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="9" cy="21" r="1.5" fill="currentColor"/>
+    <circle cx="17" cy="21" r="1.5" fill="currentColor"/>
+  </svg>
+  <span class="cart-count snipcart-items-count" id="cartCount" aria-live="polite" aria-atomic="true">0</span>
+</button>
+</div>
+</nav>
+<!-- Mobile nav trigger -->
+<button aria-controls="slideMenu" aria-expanded="false" aria-label="Open navigation" class="hamburger" id="hamburger">
+<span></span><span></span><span></span>
+</button>
+<!-- Slide-out mobile menu + backdrop -->
+<div class="slide-menu-bg" hidden="" id="slideMenuBg"></div>
+<nav aria-label="Mobile Navigation" class="slide-menu" hidden="" id="slideMenu">
+<a class="nav-link" href="#shows">Shows</a>
+<a class="nav-link" href="#standup">Stand-up</a>
+<a class="nav-link" href="#improv">Improv</a>
+<a class="nav-link" href="#burlesque">Burlesque</a>
+<a class="nav-link" href="#drag">Drag</a>
+<a class="nav-link merch" href="#merch">Merch</a>
+<a class="nav-link" href="#workshops">Workshops</a>
+<a class="nav-link" href="#contact">Contact</a>
+<button class="nav-link cart-link snipcart-checkout" id="cartButtonMobile" aria-label="Open cart (0 items)">
+  <svg class="cart-icon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M6 6h.5l2.1 8.4a2 2 0 0 0 2 1.6h6.3a2 2 0 0 0 2-1.6L20 9H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="9" cy="21" r="1.5" fill="currentColor"/>
+    <circle cx="17" cy="21" r="1.5" fill="currentColor"/>
+  </svg>
+  <span class="cart-count snipcart-items-count" id="cartCountMobile" aria-live="polite" aria-atomic="true">0</span>
+</button>
+</nav>
+</header>
+<!-- Hero slider -->
+<section aria-label="Featured" class="slider" id="slider">
+<div aria-live="polite" class="slides" id="slides">
+<!-- Slide 1 -->
+<div class="slide">
+<div class="bg" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/pinkcat.png')"></div>
+<img alt="Promotional artwork: Pink Cat" src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/pinkcat.png"/>
+<a class="cta-button" href="#shows">Book Tickets Now</a>
+</div>
+<!-- Slide 2 -->
+<div class="slide">
+<div class="bg" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/YellowCat.png')"></div>
+<img alt="Promotional artwork: Yellow Cat" src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/YellowCat.png"/>
+<a class="cta-button" href="#shows">Book Tickets Now</a>
+</div>
+<!-- Slide 3 -->
+<div class="slide">
+<div class="bg" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Blackcat.png')"></div>
+<img alt="Promotional artwork: Black Cat" src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Blackcat.png"/>
+<a class="cta-button" href="#shows">Book Tickets Now</a>
+</div>
+</div>
+<div aria-label="Slide indicators" class="dots" id="dots"></div>
+<button aria-label="Previous slide" class="arrow left" onclick="prevSlide()" type="button">←</button>
+<button aria-label="Next slide" class="arrow right" onclick="nextSlide(true)" type="button">→</button>
+</section>
+<main class="main-wrapper">
+<!-- About -->
+<section class="about-section" id="about">
+<h1>Two Black Cats Comedy</h1>
+<p>
+        Two Black Cats Comedy is a bold, high-energy entertainment collective serving up a fierce mix of stand-up, improv, burlesque, drag, and workshops that are as unforgettable as they are unapologetic.
+        From laugh-out-loud comedy to jaw-dropping performances, our shows are designed to thrill, challenge, and celebrate. Whether you’re here to catch a killer lineup, learn something new, or just get a little weird, we’ve got you covered.
+        Get your tickets. Bring your friends. Let’s make some chaos.
+      </p>
+</section>
+<!-- Shows -->
+<h2 class="shows-header" id="shows">Upcoming Shows</h2>
+<div class="event-cards-bg">
+<!-- Date range filter -->
+<div class="date-picker-bar">
+<label for="event-range" style="font-weight:600;margin-right:0.5em;">Pick a Period:</label>
+<input id="event-range" placeholder="DATE" readonly="" type="text"/>
+<button id="show-all-dates" type="button">Show All</button>
+</div>
+<!-- Grid -->
+<section class="shows-section">
+<div class="shows-grid" id="showsGrid">
+<!-- EVENT CARD 1 -->
+<article class="event-card" data-date="1 SEP 2025" data-description="A night of jaw-dropping burlesque and dazzling acts. Hosted by the fabulous Miss Velvet! This is a super long description to test the show more functionality." data-event-date="2025-08-01" data-image="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Broulesque.png" data-location="Tigullio, St. Julians" data-map="https://www.google.com/maps?q=Tigullio+Malta" data-price="€24" data-tagline="Glam, tease, and show-stopping moves" data-time="6:00 PM" data-title="BURLESQUE: LIKE NEVER BEFORE">
+<div aria-hidden="true" class="event-date">
+<span class="event-month"></span>
+<span class="event-day"></span>
+<span class="event-weekday"></span>
+</div>
+<div class="event-img" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Broulesque.png')"></div>
+<div class="event-info">
+<h3 class="event-title">BURLESQUE: LIKE NEVER BEFORE</h3>
+<p class="event-tagline">Glam, tease, and show-stopping moves</p>
+<div class="event-meta vertical">
+<span class="event-time event-pill">
+<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
+<circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"></circle>
+<path d="M10 5V10L13 12" stroke="#000" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+        6:00 PM
+      </span>
+<span class="event-location event-pill">
+<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
+<path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"></path>
+<circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"></circle>
+</svg>
+<a href="https://www.facebook.com/TigullioClub/" rel="noopener" target="_blank">Tigullio</a>
+</span>
+</div>
+<button class="event-cta snipcart-add-item">
+      GET TICKETS
+    </button>
+</div>
+</article>
+<!-- EVENT CARD 2 -->
+<article class="event-card" data-date="5 SEP 2025" data-description="An intimate open-mic night hosted by Niti Dhingra — new material, raw creativity, big laughs." data-event-date="2025-09-05" data-image="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Openmic.png" data-location="SOHO The Strand" data-map="https://sohomalta.com/locations/the-strand/" data-price="€12" data-tagline="Fresh jokes, raw talent, real laughs" data-time="6:00 PM" data-title="OPEN MIC by Niti Dhingra">
+<div aria-hidden="true" class="event-date">
+<span class="event-month"></span>
+<span class="event-day"></span>
+<span class="event-weekday"></span>
+</div>
+<div class="event-img" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Openmic.png')"></div>
+<div class="event-info">
+<h3 class="event-title">OPEN MIC by Niti Dhingra</h3>
+<p class="event-tagline">Fresh jokes, raw talent, real laughs</p>
+<div class="event-meta vertical">
+<span class="event-time event-pill">
+<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
+<circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"></circle>
+<path d="M10 5V10L13 12" stroke="#000" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+        6:00 PM
+      </span>
+<span class="event-location event-pill">
+<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
+<path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"></path>
+<circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"></circle>
+</svg>
+<a href="https://sohomalta.com/locations/the-strand/" rel="noopener" target="_blank">SOHO The Strand</a>
+</span>
+</div>
+<button class="event-cta snipcart-add-item">
+      GET TICKETS
+    </button>
+</div>
+</article>
+<!-- EVENT CARD 3 -->
+<article class="event-card" data-date="12 SEP 2025" data-description="Drag royalty tearing up the stage. Fierce looks, bold performances, and big energy." data-event-date="2025-09-12" data-image="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/dragshow.png" data-location="The Royal British Legion" data-map="https://maps.app.goo.gl/aUyEhhVC9Lk5yM6N9" data-price="€28" data-tagline="High camp, high energy, high heels" data-time="6:00 PM" data-title="DRAG SHOW: Fiercer Than Ever">
+<div aria-hidden="true" class="event-date">
+<span class="event-month"></span>
+<span class="event-day"></span>
+<span class="event-weekday"></span>
+</div>
+<div class="event-img" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/dragshow.png')"></div>
+<div class="event-info">
+<h3 class="event-title">DRAG SHOW: Fiercer Than Ever</h3>
+<p class="event-tagline">High camp, high energy, high heels</p>
+<div class="event-meta vertical">
+<span class="event-time event-pill">
+<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
+<circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"></circle>
+<path d="M10 5V10L13 12" stroke="#000" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+        6:00 PM
+      </span>
+<span class="event-location event-pill">
+<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
+<path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"></path>
+<circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"></circle>
+</svg>
+<a href="https://maps.app.goo.gl/aUyEhhVC9Lk5yM6N9" rel="noopener" target="_blank">The Royal British Legion</a>
+</span>
+</div>
+<button class="event-cta snipcart-add-item">
+      GET TICKETS
+    </button>
+</div>
+</article>
+<!-- EVENT CARD 4 -->
+<article class="event-card" data-date="2 SEP 2025" data-description="A sharp, high-energy stand-up set by Niti Dhingra." data-event-date="2025-09-02" data-image="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Standup.png" data-location="97 Notes" data-map="https://97notes.com/" data-price="€16" data-tagline="Punchlines, pace, and pure fun" data-time="6:00 PM" data-title="STANDUP COMEDY By Niti Dhingra">
+<div aria-hidden="true" class="event-date">
+<span class="event-month"></span>
+<span class="event-day"></span>
+<span class="event-weekday"></span>
+</div>
+<div class="event-img" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Standup.png')"></div>
+<div class="event-info">
+<h3 class="event-title">STANDUP COMEDY By Niti Dhingra</h3>
+<p class="event-tagline">Punchlines, pace, and pure fun</p>
+<div class="event-meta vertical">
+<span class="event-time event-pill">
+<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
+<circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"></circle>
+<path d="M10 5V10L13 12" stroke="#000" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+        6:00 PM
+      </span>
+<span class="event-location event-pill">
+<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
+<path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"></path>
+<circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"></circle>
+</svg>
+<a href="https://97notes.com/" rel="noopener" target="_blank">97 Notes</a>
+</span>
+</div>
+<button class="event-cta snipcart-add-item">
+      GET TICKETS
+    </button>
+</div>
+</article>
+<!-- EVENT CARD 5 -->
+<article class="event-card" data-date="11 SEP 2025" data-description="Fast, fearless improv with audience suggestions fueling the chaos." data-event-date="2025-09-11" data-image="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/improv.png" data-location="Tigullio" data-map="https://www.facebook.com/TigullioClub/" data-price="€14" data-tagline="Quick thinking, big laughs, no script" data-time="6:00 PM" data-title="LIVE TONIGHT IMPROV">
+<div aria-hidden="true" class="event-date">
+<span class="event-month"></span>
+<span class="event-day"></span>
+<span class="event-weekday"></span>
+</div>
+<div class="event-img" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/improv.png')"></div>
+<div class="event-info">
+<h3 class="event-title">LIVE TONIGHT IMPROV</h3>
+<p class="event-tagline">Quick thinking, big laughs, no script</p>
+<div class="event-meta vertical">
+<span class="event-time event-pill">
+<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
+<circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"></circle>
+<path d="M10 5V10L13 12" stroke="#000" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+        6:00 PM
+      </span>
+<span class="event-location event-pill">
+<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
+<path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"></path>
+<circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"></circle>
+</svg>
+<a href="https://www.facebook.com/TigullioClub/" rel="noopener" target="_blank">Tigullio</a>
+</span>
+</div>
+<button class="event-cta snipcart-add-item">
+      GET TICKETS
+    </button>
+</div>
+</article>
+<!-- EVENT CARD 6 -->
+<article class="event-card" data-date="15 SEP 2025" data-description="Another stacked stand-up night — new faces, tight sets, big laughs." data-event-date="2025-09-15" data-image="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png" data-location="97 Notes" data-map="https://97notes.com/" data-price="€18" data-tagline="New comics, hot sets, killer vibes" data-time="6:00 PM" data-title="STANDUP SHOW">
+<div aria-hidden="true" class="event-date">
+<span class="event-month"></span>
+<span class="event-day"></span>
+<span class="event-weekday"></span>
+</div>
+<div class="event-img" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/woman.png')"></div>
+<div class="event-info">
+<h3 class="event-title">STANDUP SHOW</h3>
+<p class="event-tagline">New comics, hot sets, killer vibes</p>
+<div class="event-meta vertical">
+<span class="event-time event-pill">
+<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
+<circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"></circle>
+<path d="M10 5V10L13 12" stroke="#000" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+        6:00 PM
+      </span>
+<span class="event-location event-pill">
+<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
+<path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"></path>
+<circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"></circle>
+</svg>
+<a href="https://97notes.com/" rel="noopener" target="_blank">97 Notes</a>
+</span>
+</div>
+<button class="event-cta snipcart-add-item">
+      GET TICKETS
+    </button>
+</div>
+</article>
+</div>
+<!-- Empty-state message -->
+<div class="no-events-message" hidden="" id="noEvents">
+  No shows available for this period.<br/>
+<span style="font-size:0.93em;color:#ffd700;">Check back soon—we’re always adding new events!</span>
+</div>
+</section> <!-- end .shows-section -->
+</div> <!-- end .event-cards-bg -->
+<!-- Instagram -->
+<section class="insta-section" id="instagram">
+<h2>INSTAGRAM</h2>
+<!-- Official Instagram embed grid: add your post/reel URLs below -->
+<div class="insta-embed-grid">
+<!-- Paste as many as you want; each is one post/reel -->
+<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DNBLGWgoCpr/" data-instgrm-version="14"></blockquote>
+<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DM8PfQUo5yM/" data-instgrm-version="14"></blockquote>
+<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DNVsYb6oPKU/" data-instgrm-version="14"></blockquote>
+<!-- Tip: add data-instgrm-captioned if you want captions shown -->
+<!-- <blockquote class="instagram-media" data-instgrm-permalink="..." data-instgrm-version="14" data-instgrm-captioned></blockquote> -->
+</div>
+</section>
+</main>
+<!-- Sticky footer shortcut -->
+<footer class="footer-bar" id="footerBar">
+<a class="footer-link" href="#" id="footerNavLink" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+<span aria-hidden="true" id="footerArrow">
+<svg aria-hidden="true" fill="none" height="36" viewbox="0 0 36 36" width="36" xmlns="http://www.w3.org/2000/svg">
+<path d="M10 15L18 23L26 15" stroke="#232323" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5"></path>
+</svg>
+</span>
+<span id="footerBack" style="display:none;">BACK TO TOP</span>
+</a>
+</footer>
+<!-- Modal root for event details -->
+<div class="event-modal" hidden="" id="event-modal">
+<div aria-labelledby="eventModalTitle" aria-modal="true" class="event-modal-content" role="dialog">
+<button aria-label="Close" class="event-modal-close" id="event-modal-close">×</button>
+<div id="event-modal-body"><!-- populated by JS --></div>
+</div>
+</div>
+<!-- Snipcart root -->
+<div data-api-key="ZmY0MTY0ZTItM2Y4Yy00YzFkLTg5NmQtNjNkMzk4MjhlMWJhNjM4ODM5NjgxMzYxOTQ1MzIy" hidden="" id="snipcart"></div>
+<!-- Site JS -->
 <script src="scripts.js"></script>
-<script async src="https://www.instagram.com/embed.js"></script>
+<!-- Official Instagram embed script (required for the blockquotes above) -->
+<script async="" src="https://www.instagram.com/embed.js"></script>
 </body>
 </html>
