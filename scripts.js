@@ -99,59 +99,40 @@ if (taglineEl) {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); card.click(); }
     });
 
-    // Ensure unique Snipcart ID and fully populate Snipcart attributes
+    // Ensure Snipcart attributes (fill only if missing; don't overwrite existing)
     const btn = $(".snipcart-add-item", card);
     if (btn) {
-      // Title from data-title or visible heading
       const title = (card.getAttribute("data-title") || $(".event-title", card)?.textContent || "Event").trim();
+      const iso   = (card.getAttribute("data-event-date") || "").trim();
+      const slug  = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const dateKey = iso ? iso.replaceAll("-", "") : "";
+      const uniqueId = (slug && dateKey) ? `${slug}-${dateKey}` : (slug || `event-${Math.random().toString(36).slice(2)}`);
 
-      // ISO date from data-event-date
-      const iso = (card.getAttribute("data-event-date") || "").trim();
+      if (!btn.getAttribute("data-item-id")) btn.setAttribute("data-item-id", uniqueId);
+      if (!btn.getAttribute("data-item-name")) btn.setAttribute("data-item-name", title);
 
-      // Build slug and unique id (changes if title or date changes)
-      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-      const dateKey = iso.replaceAll("-", ""); // e.g. 20250905
-      const uniqueId = slug && dateKey ? `${slug}-${dateKey}` : (slug || `event-${Math.random().toString(36).slice(2)}`);
-
-      // Name
-      btn.setAttribute("data-item-name", title);
-
-      // ID
-      btn.setAttribute("data-item-id", uniqueId);
-
-      // Price (strip currency symbols, keep digits and dot)
       const rawPrice = (card.getAttribute("data-price") || "").trim();
-      const numeric = rawPrice.replace(/[^0-9.]/g, "");
-      if (numeric) btn.setAttribute("data-item-price", numeric);
+      const numeric  = rawPrice.replace(/[^0-9.]/g, "");
+      if (!btn.getAttribute("data-item-price") && numeric) btn.setAttribute("data-item-price", numeric);
 
-      // URL — use current page with a per-item hash so it's unique + same-origin
-      try {
-        const path = location.pathname || "/";
-        btn.setAttribute("data-item-url", `${path}#${uniqueId}`);
-      } catch {}
-
-      // Description — helpful summary for the cart
-      const time = (card.getAttribute("data-time") || "").trim();
-      const loc  = (card.getAttribute("data-location") || "").trim();
-      const d    = iso ? new Date(iso + "T12:00:00") : null;
-      const MONTHS_ABBR = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-      const pretty = (d && !isNaN(d)) ? `${d.getUTCDate()} ${MONTHS_ABBR[d.getUTCMonth()]} ${d.getUTCFullYear()}` : iso;
-
-      const bits = [
-        title,
-        pretty ? `| ${pretty}` : "",
-        time ? `| ${time}` : "",
-        loc ? `| ${loc}` : ""
-      ].filter(Boolean).join(" ");
-      btn.setAttribute("data-item-description", bits);
-
-      // Quantity — default to 2 unless explicitly provided
-      if (!btn.getAttribute("data-item-quantity")) {
-        btn.setAttribute("data-item-quantity", "2");
+      if (!btn.getAttribute("data-item-url")) {
+        try { btn.setAttribute("data-item-url", location.pathname || "/"); } catch {}
       }
 
-      // ARIA
-      btn.setAttribute("aria-label", `Get tickets for ${title}${pretty ? ` on ${pretty}` : ""}${loc ? ` at ${loc}` : ""}`);
+      if (!btn.getAttribute("data-item-description")) {
+        const time = (card.getAttribute("data-time") || "").trim();
+        const loc  = (card.getAttribute("data-location") || "").trim();
+        let pretty = "";
+        if (iso) {
+          const d = new Date(iso + "T12:00:00");
+          const MONTHS_ABBR = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+          if (!isNaN(d)) pretty = `${d.getUTCDate()} ${MONTHS_ABBR[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+        }
+        const bits = [title, pretty && `| ${pretty}`, time && `| ${time}`, loc && `| ${loc}`].filter(Boolean).join(" ");
+        if (bits) btn.setAttribute("data-item-description", bits);
+      }
+
+      if (!btn.getAttribute("data-item-quantity")) btn.setAttribute("data-item-quantity", "2");
     }
   });
 
