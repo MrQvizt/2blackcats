@@ -19,7 +19,19 @@ const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
       if (!isNaN(d)) wdEl.textContent = weekdayShort[d.getUTCDay()];
     }
 
-    /* ---------- Title + Tagline grouped in a compact heading block ---------- */
+    
+    /* ---------- Month/Day from ISO date (non-breaking) ---------- */
+    (function(){
+      const moEl = $(".event-month", card);
+      const dyEl = $(".event-day", card);
+      if (!iso || (!moEl && !dyEl)) return;
+      const dd = new Date(iso + "T12:00:00"); // noon avoids TZ drift
+      if (isNaN(dd)) return;
+      const MONTHS_ABBR = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+      if (moEl) moEl.textContent = MONTHS_ABBR[dd.getMonth()];  // local month
+      if (dyEl) dyEl.textContent = String(dd.getDate());        // local day
+    })();
+/* ---------- Title + Tagline grouped in a compact heading block ---------- */
     const infoEl  = $(".event-info", card);
     const titleEl = $(".event-title", card);
     const metaEl  = $(".event-meta", card);
@@ -99,20 +111,44 @@ if (taglineEl) {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); card.click(); }
     });
 
-    // Ensure Snipcart attributes (fill only if missing; don't overwrite existing)
+    // Ensure unique Snipcart ID and sync numeric price
     const btn = $(".snipcart-add-item", card);
     if (btn) {
+      let id = btn.getAttribute("data-item-id");
+      if (!id) {
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+        const dateKey = (iso || "").replaceAll("-", "");
+        btn.setAttribute("data-item-id", `${slug}-${dateKey}` || `event-${Math.random().toString(36).slice(2)}`);
+      }
+      if (priceRaw) {
+        const numeric = priceRaw.replace(/[^0-9.]/g, "");
+        if (numeric) btn.setAttribute("data-item-price", numeric);
+      }
+      btn.setAttribute("aria-label", `Get tickets for ${title}${date ? ` on ${date}` : ""}${loc ? ` at ${loc}` : ""}`);
+    }
+  
+    // === Minimal Snipcart autopop (fill only if missing) =================
+    (function(){
+      const btn = $(".snipcart-add-item", card);
+      if (!btn) return;
+
+      // Source data
       const title = (card.getAttribute("data-title") || $(".event-title", card)?.textContent || "Event").trim();
       const iso   = (card.getAttribute("data-event-date") || "").trim();
-      const slug  = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const price = (card.getAttribute("data-price") || "").trim();
+      const time  = (card.getAttribute("data-time") || "").trim();
+      const loc   = (card.getAttribute("data-location") || "").trim();
+
+      // Build unique id from title + date (changes if either changes)
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
       const dateKey = iso ? iso.replaceAll("-", "") : "";
-      const uniqueId = (slug && dateKey) ? `${slug}-${dateKey}` : (slug || `event-${Math.random().toString(36).slice(2)}`);
+      const uid = (slug && dateKey) ? `${slug}-${dateKey}` : (slug || `event-${Math.random().toString(36).slice(2)}`);
 
-      if (!btn.getAttribute("data-item-id")) btn.setAttribute("data-item-id", uniqueId);
-      if (!btn.getAttribute("data-item-name")) btn.setAttribute("data-item-name", title);
+      // Fill only if missing (keeps any manual overrides / visuals intact)
+      if (!btn.getAttribute("data-item-id"))    btn.setAttribute("data-item-id", uid);
+      if (!btn.getAttribute("data-item-name"))  btn.setAttribute("data-item-name", title);
 
-      const rawPrice = (card.getAttribute("data-price") || "").trim();
-      const numeric  = rawPrice.replace(/[^0-9.]/g, "");
+      const numeric = price.replace(/[^0-9.]/g, "");
       if (!btn.getAttribute("data-item-price") && numeric) btn.setAttribute("data-item-price", numeric);
 
       if (!btn.getAttribute("data-item-url")) {
@@ -120,21 +156,20 @@ if (taglineEl) {
       }
 
       if (!btn.getAttribute("data-item-description")) {
-        const time = (card.getAttribute("data-time") || "").trim();
-        const loc  = (card.getAttribute("data-location") || "").trim();
         let pretty = "";
         if (iso) {
           const d = new Date(iso + "T12:00:00");
-          const MONTHS_ABBR = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-          if (!isNaN(d)) pretty = `${d.getUTCDate()} ${MONTHS_ABBR[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+          const M = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+          if (!isNaN(d)) pretty = `${d.getUTCDate()} ${M[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
         }
-        const bits = [title, pretty && `| ${pretty}`, time && `| ${time}`, loc && `| ${loc}`].filter(Boolean).join(" ");
-        if (bits) btn.setAttribute("data-item-description", bits);
+        const desc = [title, pretty && `| ${pretty}`, time && `| ${time}`, loc && `| ${loc}`].filter(Boolean).join(" ");
+        if (desc) btn.setAttribute("data-item-description", desc);
       }
 
       if (!btn.getAttribute("data-item-quantity")) btn.setAttribute("data-item-quantity", "2");
-    }
-  });
+    })();
+    // =====================================================================
+});
 
   /* ---------- Modal handling ---------- */
   const modal      = $("#event-modal");
@@ -293,7 +328,7 @@ if (map) {
   });
 })();
 
-// === Date range picker + filter (idempotent) ===============================
+// === Date range picker + filter (today forward only) ======================
 (() => {
   const input   = document.getElementById('event-range');
   const grid    = document.getElementById('showsGrid');
@@ -303,13 +338,15 @@ if (map) {
 
   if (!input || !cards.length) return;
 
+  // Compute today's date once (YYYY-MM-DD)
+  const TODAY = new Date().toISOString().split('T')[0];
+
   // Helper: show/hide by yyyy-mm-dd
   function filterByRange(start, end) {
     let shown = 0;
-    const today = new Date().toISOString().split("T")[0];
     cards.forEach(card => {
-      const d = card.getAttribute('data-event-date'); // yyyy-mm-dd
-      const notPast = d >= today;
+      const d = card.getAttribute('data-event-date') || ''; // yyyy-mm-dd
+      const notPast = d >= TODAY;                            // block past events
       const inRange = (!start || d >= start) && (!end || d <= end);
       const keep = notPast && inRange;
       card.style.display = keep ? '' : 'none';
@@ -318,11 +355,12 @@ if (map) {
     if (noMsg) noMsg.hidden = shown !== 0;
   }
 
-  // Flatpickr init
+  // Flatpickr init — only allow selecting from today onward
   if (typeof flatpickr === 'function') {
     flatpickr(input, {
       mode: 'range',
       dateFormat: 'Y-m-d',
+      minDate: 'today',              // disallow past dates in the picker
       // Optional: make it nice to read in the input
       altInput: true,
       altFormat: 'j M Y',
@@ -336,25 +374,36 @@ if (map) {
     });
   }
 
-  // “Show All” button
-// Compute today's date as YYYY-MM-DD once
-const today = new Date().toISOString().split("T")[0];
+  // “Show All” — show everything from today onward (>= TODAY)
+  if (showAll) {
+    showAll.addEventListener('click', () => {
+      input.value = '';
+      filterByRange(TODAY, null);
+    });
+  }
 
-// Core range check used by your filter (keep this single definition)
-const inRange = (d, start, end) =>
-  (!start || d >= start) && (!end || d <= end);
-
-// “Show All” button — show items from today onward (>= today)
-if (showAll) {
-  showAll.addEventListener('click', () => {
-    // Clear any text filter
-    if (input) input.value = '';
-
-    // Apply range: start = today, end = null  -> d >= today
-    filterByRange(today, null);
-  });
-}
-
-  // initial state
+  // initial state: show upcoming (>= today)
   filterByRange(null, null);
 })();
+
+
+// === Ensure event cards are sorted by date (soonest upcoming first) =======
+(() => {
+  const grid  = document.getElementById('showsGrid');
+  if (!grid) return;
+  const cards = Array.from(grid.querySelectorAll('.event-card'));
+  if (!cards.length) return;
+
+  // Sort by ISO YYYY-MM-DD ascending so the nearest upcoming date appears first
+  cards.sort((a, b) => {
+    const da = a.getAttribute('data-event-date') || '';
+    const db = b.getAttribute('data-event-date') || '';
+    return da.localeCompare(db); // earliest -> latest
+  });
+
+  // Re-append in order (this moves existing nodes without breaking listeners)
+  const frag = document.createDocumentFragment();
+  cards.forEach(card => frag.appendChild(card));
+  grid.appendChild(frag);
+})();
+
