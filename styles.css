@@ -786,17 +786,24 @@ event-modal-meta{
 }
 
 
-/* === Snipcart: force cart above all UI === */
+/* === Snipcart hard z-index fix ========================================= */
 #snipcart,
-.snipcart { position: relative; z-index: 100000 !important; }
-
+.snipcart,
+.snipcart *,
+.snipcart-modal,
+.snipcart-cart,
+.snipcart-sidecart,
+.snipcart-cart__content,
+.snipcart-sidecart__content,
+.snipcart-cart__container,
+.snipcart-sidecart__container {
+  position: relative;
+  z-index: 2147483646 !important; /* max-ish */
+}
 .snipcart-modal__overlay {
   position: fixed !important;
   inset: 0 !important;
-  z-index: 100001 !important;
+  z-index: 2147483645 !important; /* just under content */
   background: rgba(0,0,0,.55) !important;
 }
-
-.snipcart-cart--opened,
-.snipcart-cart__content { z-index: 100002 !important; top: 0 !important; }
 
