@@ -152,7 +152,7 @@ if (taglineEl) {
       if (!btn.getAttribute("data-item-price") && numeric) btn.setAttribute("data-item-price", numeric);
 
       if (!btn.getAttribute("data-item-url")) {
-        try { btn.setAttribute("data-item-url", (location.origin || "") + (location.pathname || "/") + "#" + uid); } catch {}
+        try { btn.setAttribute("data-item-url", location.pathname || "/"); } catch {}
       }
 
       if (!btn.getAttribute("data-item-description")) {
@@ -408,31 +408,45 @@ if (map) {
 })();
 
 
-// === Safety: ensure required Snipcart attrs exist at click time ==========
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.snipcart-add-item');
-  if (!btn) return;
-  const card = btn.closest('.event-card');
-  if (!card) return;
+// === Snipcart cart badge in header =======================================
+(() => {
+  const link = document.getElementById('site-cart-link');
+  if (!link) return;
+  const badge = link.querySelector('.cart-badge');
 
-  // If required attrs missing, fill them quickly
-  const needId = !btn.getAttribute('data-item-id');
-  const needName = !btn.getAttribute('data-item-name');
-  const needPrice = !btn.getAttribute('data-item-price');
-  const needUrl = !btn.getAttribute('data-item-url');
-
-  if (needId || needName || needPrice || needUrl) {
-    const title = (card.getAttribute('data-title') || 'Event').trim();
-    const iso   = (card.getAttribute('data-event-date') || '').trim();
-    const price = (card.getAttribute('data-price') || '').replace(/[^0-9.]/g,'');
-    const slug  = title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
-    const uid   = slug && iso ? `${slug}-${iso.replaceAll('-','')}` : slug || `event-${Math.random().toString(36).slice(2)}`;
-
-    if (needId)    btn.setAttribute('data-item-id', uid);
-    if (needName)  btn.setAttribute('data-item-name', title);
-    if (needPrice && price) btn.setAttribute('data-item-price', price);
-    if (needUrl)   btn.setAttribute('data-item-url', (location.origin || '') + (location.pathname || '/') + '#' + uid);
-    if (!btn.getAttribute('data-item-quantity')) btn.setAttribute('data-item-quantity','2');
+  function update(count){
+    if (!badge) return;
+    badge.textContent = count;
+    badge.hidden = !(count > 0);
+    link.hidden = !(count > 0);
   }
-});
+
+  function setup(){
+    try {
+      // Snipcart v3 store subscription
+      const initState = window.Snipcart?.store?.getState?.();
+      if (initState) {
+        const initial = initState.cart?.items?.count || 0;
+        update(initial);
+        window.Snipcart.store.subscribe((state) => {
+          const c = state.cart?.items?.count || 0;
+          update(c);
+        });
+        return;
+      }
+    } catch(_) {}
+
+    // Fallback: listen to add/remove events
+    if (window.Snipcart?.events) {
+      let c = 0;
+      update(c);
+      window.Snipcart.events.on('item.added', () => update(++c));
+      window.Snipcart.events.on('item.removed', () => update(Math.max(0, --c)));
+      window.Snipcart.events.on('cart.confirmed', () => update(0));
+    }
+  }
+
+  if (window.Snipcart?.store) setup();
+  else document.addEventListener('snipcart.ready', setup);
+})();
 
