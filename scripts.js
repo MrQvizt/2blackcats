@@ -1,413 +1,210 @@
-/* Utility selectors */
-const $ = (sel, ctx = document) => ctx.querySelector(sel);
-const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+// ====== Mobile menu ======
+(function(){
+  const btn = document.getElementById('hamburger');
+  const panel = document.getElementById('slideMenu');
+  const bg = document.getElementById('slideMenuBg');
+  if(!btn || !panel || !bg) return;
+  const open = () => { panel.hidden = false; bg.hidden = false; btn.setAttribute('aria-expanded','true'); };
+  const close = () => { panel.hidden = true; bg.hidden = true; btn.setAttribute('aria-expanded','false'); };
+  btn.addEventListener('click', () => (panel.hidden ? open() : close()));
+  bg.addEventListener('click', close);
+  panel.querySelectorAll('a,button').forEach(el => el.addEventListener('click', close));
+})();
 
-/* -------------------------
-   Event cards (weekday, title+tagline block, price chip, modal, snipcart IDs)
-------------------------- */
-(() => {
-  const grid  = $("#showsGrid");
-  const cards = $$(".event-card", grid);
-  const weekdayShort = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+// ====== Slider ======
+(function(){
+  const slidesEl = document.getElementById('slides');
+  const dotsEl = document.getElementById('dots');
+  if(!slidesEl || !dotsEl) return;
+  const slides = Array.from(slidesEl.children);
+  let i = 0; let lock = false;
 
-  cards.forEach(card => {
-    /* ---------- Weekday badge from ISO date ---------- */
-    const iso  = card.getAttribute("data-event-date");
-    const wdEl = $(".event-weekday", card);
-    if (iso && wdEl) {
-      const d = new Date(iso + "T12:00:00");
-      if (!isNaN(d)) wdEl.textContent = weekdayShort[d.getUTCDay()];
-    }
-
-    
-    /* ---------- Month/Day from ISO date (non-breaking) ---------- */
-    (function(){
-      const moEl = $(".event-month", card);
-      const dyEl = $(".event-day", card);
-      if (!iso || (!moEl && !dyEl)) return;
-      const dd = new Date(iso + "T12:00:00"); // noon avoids TZ drift
-      if (isNaN(dd)) return;
-      const MONTHS_ABBR = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-      if (moEl) moEl.textContent = MONTHS_ABBR[dd.getMonth()];  // local month
-      if (dyEl) dyEl.textContent = String(dd.getDate());        // local day
-    })();
-/* ---------- Title + Tagline grouped in a compact heading block ---------- */
-    const infoEl  = $(".event-info", card);
-    const titleEl = $(".event-title", card);
-    const metaEl  = $(".event-meta", card);
-    if (!infoEl || !titleEl || !metaEl) return;
-
-    // Create a dedicated wrapper so tagline always hugs the title
-    let heading = $(".event-heading", infoEl);
-    if (!heading) {
-      heading = document.createElement("div");
-      heading.className = "event-heading";
-      infoEl.insertBefore(heading, metaEl);      // place heading above pills
-      heading.appendChild(titleEl);              // move title into heading
-    } else if (titleEl.parentElement !== heading) {
-      heading.insertBefore(titleEl, heading.firstChild);
-    }
-
- // ----- Tagline: move existing one into the heading; create only if missing -----
-let taglineEl = card.querySelector(".event-tagline"); // may already exist in your HTML
-const tagText = (card.getAttribute("data-tagline") || "").trim();
-
-if (taglineEl) {
-  // Ensure the tagline sits right under the title inside the heading wrapper
-  if (taglineEl.parentElement !== heading) {
-    taglineEl.remove();
-    heading.appendChild(taglineEl);
-  } else if (heading.lastElementChild !== taglineEl) {
-    // if it's inside heading but not last, move it to be under the title
-    taglineEl.remove();
-    heading.appendChild(taglineEl);
+  function go(n){
+    if(lock) return;
+    i = (n + slides.length) % slides.length;
+    slidesEl.style.transform = `translateX(${-i*100}%)`;
+    dotsEl.querySelectorAll('span').forEach((d,idx)=>d.classList.toggle('active', idx===i));
   }
-  // If a data-tagline is provided, sync the text (optional)
-  if (tagText) taglineEl.textContent = tagText;
-} else if (tagText) {
-  // No existing tagline in HTML — create one from data-tagline
-  taglineEl = document.createElement("p");
-  taglineEl.className = "event-tagline";
-  taglineEl.textContent = tagText;
-  heading.appendChild(taglineEl);
-}
+  window.prevSlide = function(){ go(i-1); };
+  window.nextSlide = function(){ go(i+1); };
 
-    /* ---------- Price pill inserted after time, before venue ---------- */
-    const priceRaw = (card.getAttribute("data-price") || "").trim(); // e.g. "€18"
-    if (priceRaw) {
-      let priceChip = $(".event-price.event-pill", card);
-      if (!priceChip) {
-        priceChip = document.createElement("span");
-        priceChip.className = "event-price event-pill";
-        priceChip.innerHTML = `
-          <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M11.2 2H7.5a2 2 0 0 0-2 2v3.7c0 .53.21 1.04.59 1.41l6.8 6.8a1.5 1.5 0 0 0 2.12 0l3-3a1.5 1.5 0 0 0 0-2.12l-6.8-6.8A2 2 0 0 0 11.2 2Z" stroke="#000" stroke-width="2" stroke-linejoin="round"></path>
-            <circle cx="8.6" cy="5.6" r="1.2" stroke="#421c52" stroke-width="2"></circle>
-          </svg>
-          <span class="event-amount"></span>
-        `;
-        // place after time pill (first), before location pill
-        const timePill = $(".event-time", metaEl);
-        const locPill  = $(".event-location", metaEl);
-        if (timePill) timePill.insertAdjacentElement("afterend", priceChip);
-        else if (locPill) metaEl.insertBefore(priceChip, locPill);
-        else metaEl.appendChild(priceChip);
-      }
-      const amountEl = $(".event-amount", priceChip);
-      if (amountEl) amountEl.textContent = priceRaw;
-    }
+  // dots
+  slides.forEach((_,idx)=>{
+    const d = document.createElement('span');
+    d.addEventListener('click',()=>go(idx));
+    dotsEl.appendChild(d);
+  });
+  go(0);
+})();
 
-    /* ---------- Accessibility + Snipcart sync ---------- */
-    const title = (card.getAttribute("data-title") || titleEl?.textContent || "Event").trim();
-    const date  = card.getAttribute("data-date") || "";
-    const time  = card.getAttribute("data-time") || "";
-    const loc   = card.getAttribute("data-location") || "";
+// ====== Event cards: date text fill + modal ======
+(function(){
+  const grid = document.getElementById('showsGrid');
+  if(!grid) return;
 
-    card.setAttribute("role", "button");
-    card.setAttribute("tabindex", "0");
-    const ariaBits = [title, date && `on ${date}`, time && `at ${time}`, loc && `in ${loc}`].filter(Boolean).join(" ");
-    card.setAttribute("aria-label", `View details: ${ariaBits}`);
-    card.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); card.click(); }
-    });
-
-    // Ensure unique Snipcart ID and sync numeric price
-    const btn = $(".snipcart-add-item", card);
-    if (btn) {
-      let id = btn.getAttribute("data-item-id");
-      if (!id) {
-        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
-        const dateKey = (iso || "").replaceAll("-", "");
-        btn.setAttribute("data-item-id", `${slug}-${dateKey}` || `event-${Math.random().toString(36).slice(2)}`);
-      }
-      if (priceRaw) {
-        const numeric = priceRaw.replace(/[^0-9.]/g, "");
-        if (numeric) btn.setAttribute("data-item-price", numeric);
-      }
-      btn.setAttribute("aria-label", `Get tickets for ${title}${date ? ` on ${date}` : ""}${loc ? ` at ${loc}` : ""}`);
-    }
-  
-    // === Minimal Snipcart autopop (fill only if missing) =================
-    (function(){
-      const btn = $(".snipcart-add-item", card);
-      if (!btn) return;
-
-      // Source data
-      const title = (card.getAttribute("data-title") || $(".event-title", card)?.textContent || "Event").trim();
-      const iso   = (card.getAttribute("data-event-date") || "").trim();
-      const price = (card.getAttribute("data-price") || "").trim();
-      const time  = (card.getAttribute("data-time") || "").trim();
-      const loc   = (card.getAttribute("data-location") || "").trim();
-
-      // Build unique id from title + date (changes if either changes)
-      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-      const dateKey = iso ? iso.replaceAll("-", "") : "";
-      const uid = (slug && dateKey) ? `${slug}-${dateKey}` : (slug || `event-${Math.random().toString(36).slice(2)}`);
-
-      // Fill only if missing (keeps any manual overrides / visuals intact)
-      if (!btn.getAttribute("data-item-id"))    btn.setAttribute("data-item-id", uid);
-      if (!btn.getAttribute("data-item-name"))  btn.setAttribute("data-item-name", title);
-
-      const numeric = price.replace(/[^0-9.]/g, "");
-      if (!btn.getAttribute("data-item-price") && numeric) btn.setAttribute("data-item-price", numeric);
-
-      if (!btn.getAttribute("data-item-url")) {
-        try { btn.setAttribute("data-item-url", location.pathname || "/"); } catch {}
-      }
-
-      if (!btn.getAttribute("data-item-description")) {
-        let pretty = "";
-        if (iso) {
-          const d = new Date(iso + "T12:00:00");
-          const M = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-          if (!isNaN(d)) pretty = `${d.getUTCDate()} ${M[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
-        }
-        const desc = [title, pretty && `| ${pretty}`, time && `| ${time}`, loc && `| ${loc}`].filter(Boolean).join(" ");
-        if (desc) btn.setAttribute("data-item-description", desc);
-      }
-
-      if (!btn.getAttribute("data-item-quantity")) btn.setAttribute("data-item-quantity", "2");
-    })();
-    // =====================================================================
-});
-
-  /* ---------- Modal handling ---------- */
-  const modal      = $("#event-modal");
-  const modalBody  = $("#event-modal-body");
-  const modalClose = $("#event-modal-close");
-
-  function openModal(html) {
-    modalBody.innerHTML = html;
-    modal.hidden = false;
-    document.body.style.overflow = "hidden";
-    $("#event-modal-close")?.focus();
-  }
-  function closeModal() {
-    modal.hidden = true;
-    modalBody.innerHTML = "";
-    document.body.style.overflow = "";
+  function formatDateParts(d){
+    const date = new Date(d);
+    const month = date.toLocaleString('en-GB',{month:'short'}).toUpperCase();
+    const day = String(date.getDate()).padStart(2,'0');
+    const weekday = date.toLocaleString('en-GB',{weekday:'short'}).toUpperCase();
+    return {month,day,weekday};
   }
 
-  modalClose?.addEventListener("click", closeModal);
-  modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
-
-  // Open modal on card click (but not when CTA is clicked)
-  cards.forEach(card => {
-    card.addEventListener("click", (e) => {
-      if (e.target.closest(".snipcart-add-item")) return;
-
-      const title = card.getAttribute("data-title") || $(".event-title", card)?.textContent?.trim() || "Event";
-      const image = card.getAttribute("data-image");
-      const desc  = card.getAttribute("data-description") || "Amazing night awaits!";
-      const date  = card.getAttribute("data-date") || "";
-      const time  = card.getAttribute("data-time") || "";
-      const loc   = card.getAttribute("data-location") || "";
-      const map   = card.getAttribute("data-map") || "";
-      const iso   = card.getAttribute("data-event-date") || "";
-      const price = (card.getAttribute("data-price") || "").trim();
-/* Build a safe Google Maps embed URL (works across browsers) */
-let mapEmbed = "";
-if (map) {
-  try {
-    const u = new URL(map, window.location.href);
-    const host = u.hostname;
-
-    if (host.includes("google.com") && u.pathname.includes("/maps")) {
-      // Convert normal maps URL to embeddable
-      if (!u.searchParams.get("output")) u.searchParams.set("output", "embed");
-      mapEmbed = u.toString();
-    } else if (host.includes("maps.app") || host.includes("goo.gl")) {
-      // Short links aren't embeddable; build from location text
-      if (loc) mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(loc)}&output=embed`;
-    } else {
-      // Non-Google URL (venue site etc.) → try from location text
-      if (loc) mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(loc)}&output=embed`;
+  // Fill date chips
+  grid.querySelectorAll('.event-card').forEach(card=>{
+    const dateStr = card.getAttribute('data-event-date');
+    if(dateStr){
+      const {month,day,weekday} = formatDateParts(dateStr);
+      card.querySelector('.event-month').textContent = month;
+      card.querySelector('.event-day').textContent = day;
+      card.querySelector('.event-weekday').textContent = weekday;
     }
-  } catch (e) {
-    if (loc) mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(loc)}&output=embed`;
+  });
+
+  // Modal handling
+  const modal = document.getElementById('event-modal');
+  const body = document.getElementById('event-modal-body');
+  const closeBtn = document.getElementById('event-modal-close');
+  const openModal = html => { body.innerHTML = html; modal.hidden = false; };
+  const closeModal = () => { modal.hidden = true; body.innerHTML = ''; };
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+
+  function tpl(card){
+    const title = card.getAttribute('data-title')||'';
+    const time = card.getAttribute('data-time')||'';
+    const price = card.getAttribute('data-price')||'';
+    const location = card.getAttribute('data-location')||'';
+    const map = card.getAttribute('data-map')||'#';
+    const img = card.getAttribute('data-image')||'';
+    const desc = card.getAttribute('data-description')||'';
+    const id = 'TBC-' + (title.replace(/[^a-z0-9]+/gi,'-').toLowerCase());
+
+    return `
+      <img class="event-modal-image" alt="${title}" src="${img}"/>
+      <div class="event-modal-inner">
+        <h3 class="event-modal-headline" id="eventModalTitle">${title}</h3>
+        <div class="event-modal-meta">
+          <span class="event-time event-pill">
+            <svg aria-hidden="true" class="event-icon" fill="none" height="18" viewBox="0 0 20 20" width="18">
+              <circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"></circle>
+              <path d="M10 5V10L13 12" stroke="#000" stroke-linecap="round" stroke-width="2"></path>
+            </svg>
+            ${time}
+          </span>
+          <span class="event-price event-pill">
+            <svg aria-hidden="true" class="event-icon" fill="none" height="18" viewBox="0 0 20 20" width="18">
+              <path d="M4 10h12" stroke="#000" stroke-width="2"></path>
+            </svg>
+            ${price}
+          </span>
+          <span class="event-location event-pill">
+            <svg aria-hidden="true" class="event-icon" fill="none" height="18" viewBox="0 0 20 20" width="18">
+              <path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"></path>
+              <circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"></circle>
+            </svg>
+            <a href="${map}" target="_blank" rel="noopener">${location}</a>
+          </span>
+        </div>
+
+        <p class="event-modal-description" id="modalDesc">${desc}</p>
+        <button class="show-more-btn" id="showMoreBtn" type="button">Show more</button>
+
+        <div class="event-cta-wrap">
+          <button class="event-cta snipcart-add-item"
+            data-item-id="${id}"
+            data-item-name="${title}"
+            data-item-price="${price.replace(/[^0-9.]/g,'') || 0}"
+            data-item-url="/"
+            data-item-description="${desc}">
+            GET TICKETS
+          </button>
+        </div>
+      </div>
+    `;
   }
-}
 
-
-    const html = `
-  <div class="event-modal-inner">
-    <img class="event-modal-image" src="${image || ""}" alt="${title}" />
-
-    <div class="event-modal-header">
-      <h3 id="eventModalTitle" class="event-modal-headline">${title}</h3>
-      <button class="event-modal-close" id="event-modal-close" aria-label="Close">&times;</button>
-    </div>
-
-    <!-- Meta pills (Row 1: time + price, Row 2: location) -->
-    <div class="event-modal-meta">
-      ${time ? `
-        <span class="event-time event-pill" aria-label="Start time ${time}">
-          <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"></circle>
-            <path d="M10 5V10L13 12" stroke="#000" stroke-width="2" stroke-linecap="round"></path>
-          </svg>
-          ${time}
-        </span>` : ""}
-
-      ${price ? `
-        <span class="event-price event-pill" aria-label="Ticket price ${price}">
-          <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M11.2 2H7.5a2 2 0 0 0-2 2v3.7c0 .53.21 1.04.59 1.41l6.8 6.8a1.5 1.5 0 0 0 2.12 0l3-3a1.5 1.5 0 0 0 0-2.12l-6.8-6.8A2 2 0 0 0 11.2 2Z" stroke="#000" stroke-width="2" stroke-linejoin="round"></path>
-            <circle cx="8.6" cy="5.6" r="1.2" stroke="#421c52" stroke-width="2"></circle>
-          </svg>
-          ${price}
-        </span>` : ""}
-
-      <!-- Location goes last so we can push it to a new row with CSS -->
-      ${loc ? `
-        <span class="event-location event-pill" aria-label="Venue ${loc}">
-          <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"></path>
-            <circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"></circle>
-          </svg>
-          ${map ? `<a href="${map}" target="_blank" rel="noopener">${loc}</a>` : `${loc}`}
-        </span>` : ""}
-    </div>
-
-    <p class="event-modal-description" id="eventDesc">${desc}</p>
-    <button class="show-more-btn" id="showMoreBtn" aria-expanded="false">Show more</button>
-
-   ${
-  mapEmbed
-    ? `<iframe class="event-modal-map" src="${mapEmbed}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" aria-label="Map for ${title}"></iframe>`
-    : (loc
-        ? `<a class="event-open-map" href="${map || `https://www.google.com/maps?q=${encodeURIComponent(loc)}`}" target="_blank" rel="noopener" aria-label="Open map for ${loc}">
-             <span class="event-pill">
-               <svg class="event-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                 <path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"></path>
-                 <circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"></circle>
-               </svg>
-               Open in Maps
-             </span>
-           </a>`
-        : ""
-      )
-}
-
-
-    <div class="event-cta-wrap">
-      <button
-        class="event-cta snipcart-add-item"
-        ${price ? `data-item-price="${price.replace(/[^0-9.]/g,'')}"` : `data-item-price="18"`}
-        data-item-id="${title.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${(iso || "").replaceAll('-','')}"
-        data-item-name="${title}"
-        data-item-url="/"
-        data-item-description="${[date,time,loc].filter(Boolean).join(' | ')}"
-        data-item-quantity="1"
-        aria-label="Get tickets for ${title}${date ? ` on ${date}` : ""}${loc ? ` at ${loc}` : ""}"
-      >
-        GET TICKETS
-      </button>
-    </div>
-  </div>
-`;
-
-
-      openModal(html);
-
-      $("#event-modal-close")?.addEventListener("click", closeModal);
-
-      const descEl = $("#eventDesc");
-      const btn = $("#showMoreBtn");
-      if (descEl && btn) {
-        const isLong = descEl.textContent.length > 220;
-        if (!isLong) btn.style.display = "none";
-        btn.addEventListener("click", () => {
-          const expanded = descEl.classList.toggle("expanded");
-          btn.setAttribute("aria-expanded", expanded ? "true" : "false");
-          btn.textContent = expanded ? "Show less" : "Show more";
+  // Open modal from card or its CTA
+  grid.addEventListener('click', (e)=>{
+    const card = e.target.closest('.event-card');
+    if(!card) return;
+    // If clicked target is the CTA or the card body, open modal
+    if(e.target.classList.contains('event-cta') || e.target === card || e.target.closest('.event-info')){
+      openModal(tpl(card));
+      // show more toggle
+      const descEl = document.getElementById('modalDesc');
+      const btn = document.getElementById('showMoreBtn');
+      if(descEl && btn){
+        btn.addEventListener('click', ()=>{
+          descEl.classList.toggle('expanded');
+          btn.textContent = descEl.classList.contains('expanded') ? 'Show less' : 'Show more';
         });
       }
-    });
+    }
   });
 })();
 
-// === Date range picker + filter (today forward only) ======================
-(() => {
-  const input   = document.getElementById('event-range');
-  const grid    = document.getElementById('showsGrid');
-  const cards   = grid ? Array.from(grid.querySelectorAll('.event-card')) : [];
-  const noMsg   = document.getElementById('noEvents');
+// ====== Date filter (Flatpickr range) ======
+(function(){
+  const input = document.getElementById('event-range');
+  const grid = document.getElementById('showsGrid');
+  const empty = document.getElementById('noEvents');
   const showAll = document.getElementById('show-all-dates');
+  if(!input || !grid || !empty || !window.flatpickr) return;
 
-  if (!input || !cards.length) return;
-
-  // Compute today's date once (YYYY-MM-DD)
-  const TODAY = new Date().toISOString().split('T')[0];
-
-  // Helper: show/hide by yyyy-mm-dd
-  function filterByRange(start, end) {
-    let shown = 0;
-    cards.forEach(card => {
-      const d = card.getAttribute('data-event-date') || ''; // yyyy-mm-dd
-      const notPast = d >= TODAY;                            // block past events
-      const inRange = (!start || d >= start) && (!end || d <= end);
-      const keep = notPast && inRange;
-      card.style.display = keep ? '' : 'none';
-      if (keep) shown++;
-    });
-    if (noMsg) noMsg.hidden = shown !== 0;
+  function within(dateStr, a, b){
+    const d = new Date(dateStr).setHours(0,0,0,0);
+    return (!a || d >= a) && (!b || d <= b);
   }
 
-  // Flatpickr init — only allow selecting from today onward
-  if (typeof flatpickr === 'function') {
-    flatpickr(input, {
-      mode: 'range',
-      dateFormat: 'Y-m-d',
-      minDate: 'today',              // disallow past dates in the picker
-      // Optional: make it nice to read in the input
-      altInput: true,
-      altFormat: 'j M Y',
-      onClose: (selectedDates, _str, fp) => {
-        if (selectedDates.length === 2) {
-          // normalise to yyyy-mm-dd
-          const [s, e] = selectedDates.map(d => fp.formatDate(d, 'Y-m-d'));
-          filterByRange(s, e);
-        }
-      }
+  function filter(a, b){
+    let any = false;
+    grid.querySelectorAll('.event-card').forEach(card=>{
+      const d = card.getAttribute('data-event-date');
+      const ok = within(d, a, b);
+      card.style.display = ok ? '' : 'none';
+      any = any || ok;
     });
+    empty.hidden = any;
   }
 
-  // “Show All” — show everything from today onward (>= TODAY)
-  if (showAll) {
-    showAll.addEventListener('click', () => {
-      input.value = '';
-      filterByRange(TODAY, null);
-    });
-  }
-
-  // initial state: show upcoming (>= today)
-  filterByRange(null, null);
-})();
-
-
-// === Ensure event cards are sorted by date (soonest upcoming first) =======
-(() => {
-  const grid  = document.getElementById('showsGrid');
-  if (!grid) return;
-  const cards = Array.from(grid.querySelectorAll('.event-card'));
-  if (!cards.length) return;
-
-  // Sort by ISO YYYY-MM-DD ascending so the nearest upcoming date appears first
-  cards.sort((a, b) => {
-    const da = a.getAttribute('data-event-date') || '';
-    const db = b.getAttribute('data-event-date') || '';
-    return da.localeCompare(db); // earliest -> latest
+  const fp = flatpickr(input, {
+    mode: 'range',
+    dateFormat: 'Y-m-d',
+    onChange: (sel)=>{
+      const [start, end] = sel;
+      const a = start ? new Date(start).setHours(0,0,0,0) : null;
+      const b = end ? new Date(end).setHours(0,0,0,0) : a;
+      filter(a,b);
+    }
   });
 
-  // Re-append in order (this moves existing nodes without breaking listeners)
-  const frag = document.createDocumentFragment();
-  cards.forEach(card => frag.appendChild(card));
-  grid.appendChild(frag);
+  showAll.addEventListener('click', ()=>{
+    input.value = '';
+    filter(null, null);
+  });
+
+  // initial state
+  filter(null, null);
 })();
 
-// === Cart badge + color sync (white when 0, yellow when >0) ===============
+// ====== Footer "Back to top" link behavior ======
+(function(){
+  const link = document.getElementById('footerNavLink');
+  const back = document.getElementById('footerBack');
+  const arrow = document.getElementById('footerArrow');
+  if(!link || !back || !arrow) return;
+  function onScroll(){
+    const scrolled = window.scrollY > 500;
+    back.style.display = scrolled ? 'inline' : 'none';
+    arrow.style.display = scrolled ? 'none' : 'inline';
+    link.setAttribute('href', scrolled ? '#top' : '#shows');
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+
+// ====== Cart badge + color sync (white when 0, yellow when >0) ======
 (() => {
   const desktopBtn  = document.getElementById('cartButton');
   const desktopCnt  = document.getElementById('cartCount');
@@ -417,30 +214,25 @@ if (map) {
   function applyState(btn, cnt){
     if (!btn || !cnt) return;
     const n = parseInt((cnt.textContent || '0').replace(/[^0-9]/g,''), 10) || 0;
+    // Toggle yellow state and show/hide badge via CSS
     btn.classList.toggle('has-items', n > 0);
+    // Update accessible label
     const label = `Open cart (${n} item${n===1?'':'s'})`;
     btn.setAttribute('aria-label', label);
   }
 
-  // Observe Snipcart-driven updates to the .snipcart-items-count span(s)
   const obsCfg = { characterData: true, childList: true, subtree: true };
-  const observers = [];
+
   if (desktopCnt) {
-    const mo = new MutationObserver(() => applyState(desktopBtn, desktopCnt));
-    mo.observe(desktopCnt, obsCfg);
-    observers.push(mo);
+    new MutationObserver(() => applyState(desktopBtn, desktopCnt)).observe(desktopCnt, obsCfg);
   }
   if (mobileCnt) {
-    const mo = new MutationObserver(() => applyState(mobileBtn, mobileCnt));
-    mo.observe(mobileCnt, obsCfg);
-    observers.push(mo);
+    new MutationObserver(() => applyState(mobileBtn, mobileCnt)).observe(mobileCnt, obsCfg);
   }
 
-  // Initial paint
+  // Initial paint + on Snipcart ready
   applyState(desktopBtn, desktopCnt);
   applyState(mobileBtn, mobileCnt);
-
-  // Also hook into Snipcart lifecycle if available to force a refresh
   window.addEventListener('snipcart.ready', () => {
     applyState(desktopBtn, desktopCnt);
     applyState(mobileBtn, mobileCnt);
