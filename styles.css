@@ -757,46 +757,33 @@ event-modal-meta{
 }
 
 
-/* === Header cart link with badge ======================================= */
-.nav .cart-link{
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-  padding: .25rem .5rem;
-  border-radius: 10px;
-  font-weight: 700;
-}
-.nav .cart-link .cart-icon{ display:inline-block; }
-.nav .cart-link .cart-badge{
-  position: absolute;
-  top: -6px;
-  right: -8px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 9px;
-  background: #e11d48; /* rose-600 */
-  color: #fff;
-  font-size: 12px;
-  line-height: 18px;
-  text-align: center;
-  font-weight: 800;
-  box-shadow: 0 2px 6px rgba(0,0,0,.2);
-}
-
-
-/* === Snipcart: force cart above all UI === */
+/* === Snipcart: ensure cart is on top of everything === */
 #snipcart,
-.snipcart { position: relative; z-index: 100000 !important; }
+.snipcart {
+  position: relative;
+  z-index: 100000 !important; /* above header/footer/modals */
+}
 
+/* Overlay should cover the whole viewport and sit above site UI */
 .snipcart-modal__overlay {
   position: fixed !important;
   inset: 0 !important;
   z-index: 100001 !important;
-  background: rgba(0,0,0,.55) !important;
 }
 
+/* Side cart container */
 .snipcart-cart--opened,
-.snipcart-cart__content { z-index: 100002 !important; top: 0 !important; }
+.snipcart-cart__content {
+  z-index: 100002 !important;
+}
+
+/* Prevent site header from overlapping when cart slides under it */
+.snipcart-cart__content {
+  top: 0 !important;
+}
+
+/* Optional: make the backdrop slightly darker for contrast with your purple header */
+.snipcart-modal__overlay {
+  background: rgba(0, 0, 0, 0.55) !important;
+}
 
