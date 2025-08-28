@@ -25,7 +25,7 @@
 <script async="" src="https://cdn.snipcart.com/themes/v3.6.0/default/snipcart.js"></script>
 <!-- Site CSS -->
 <link href="styles.css" rel="stylesheet">
-</link></link></head>
+</head>
 <body>
 <!-- Skip link for accessibility -->
 <a class="skip-link" href="#shows">Skip to Upcoming Shows</a>
@@ -72,57 +72,34 @@
 <a class="nav-link merch" href="#merch">Merch</a>
 <a class="nav-link" href="#workshops">Workshops</a>
 <a class="nav-link" href="#contact">Contact</a>
-<button class="nav-link cart-link snipcart-checkout" id="cartButton" aria-label="Open cart (0 items)">
-  <span class="cart-icon-wrap">
-    <svg class="cart-icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M6 6h.5l2.1 8.4a2 2 0 0 0 2 1.6h6.3a2 2 0 0 0 2-1.6L20 9H8"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="9" cy="21" r="1.5" fill="currentColor"/>
-      <circle cx="17" cy="21" r="1.5" fill="currentColor"/>
-    </svg>
-    <span class="cart-count snipcart-items-count" id="cartCount"
-          aria-live="polite" aria-atomic="true">0</span>
-  </span>
+<button class="nav-link cart-link snipcart-checkout" id="cartButtonMobile" aria-label="Open cart (0 items)">
+  <svg class="cart-icon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M6 6h.5l2.1 8.4a2 2 0 0 0 2 1.6h6.3a2 2 0 0 0 2-1.6L20 9H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="9" cy="21" r="1.5" fill="currentColor"/>
+    <circle cx="17" cy="21" r="1.5" fill="currentColor"/>
+  </svg>
+  <span class="cart-count snipcart-items-count" id="cartCountMobile" aria-live="polite" aria-atomic="true">0</span>
 </button>
-
 </nav>
 </header>
 <!-- Hero slider -->
-<section aria-label="Featured" class="slider" id="slider">
-<div aria-live="polite" class="slides" id="slides">
-<!-- Slide 1 -->
-<div class="slide">
-<div class="bg" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/pinkcat.png')"></div>
-<img alt="Promotional artwork: Pink Cat" src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/pinkcat.png"/>
-<a class="cta-button" href="#shows">Book Tickets Now</a>
-</div>
-<!-- Slide 2 -->
-<div class="slide">
-<div class="bg" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/YellowCat.png')"></div>
-<img alt="Promotional artwork: Yellow Cat" src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/YellowCat.png"/>
-<a class="cta-button" href="#shows">Book Tickets Now</a>
-</div>
-<!-- Slide 3 -->
-<div class="slide">
-<div class="bg" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Blackcat.png')"></div>
-<img alt="Promotional artwork: Black Cat" src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Blackcat.png"/>
-<a class="cta-button" href="#shows">Book Tickets Now</a>
-</div>
-</div>
-<div aria-label="Slide indicators" class="dots" id="dots"></div>
-<button aria-label="Previous slide" class="arrow left" onclick="prevSlide()" type="button">←</button>
-<button aria-label="Next slide" class="arrow right" onclick="nextSlide(true)" type="button">→</button>
+<section class="slider fixed-hero" id="slider" aria-label="Featured">
+  <div class="fixed-hero-bg"
+       style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/2bcc-banner-wide.png')">
+  </div>
+
+ <h1 class="fixed-hero-title" aria-label="Two Black Cats Comedy">
+  <span class="line1">Two Black Cats</span>
+  <span class="line2">Comedy</span>
+</h1>
+
+  <!-- Keep these empty elements so any existing JS that queries them won't crash -->
+  <div id="slides" hidden></div>
+  <div id="dots" hidden></div>
 </section>
 <main class="main-wrapper">
-<!-- About -->
-<section class="about-section" id="about">
-<h1>Two Black Cats Comedy</h1>
-<p>
-        Two Black Cats Comedy is a bold, high-energy entertainment collective serving up a fierce mix of stand-up, improv, burlesque, drag, and workshops that are as unforgettable as they are unapologetic.
-        From laugh-out-loud comedy to jaw-dropping performances, our shows are designed to thrill, challenge, and celebrate. Whether you’re here to catch a killer lineup, learn something new, or just get a little weird, we’ve got you covered.
-        Get your tickets. Bring your friends. Let’s make some chaos.
-      </p>
-</section>
+
+
 <!-- Shows -->
 <h2 class="shows-header" id="shows">Upcoming Shows</h2>
 <div class="event-cards-bg">
@@ -337,17 +314,86 @@
 </div> <!-- end .event-cards-bg -->
 <!-- Instagram -->
 <section class="insta-section" id="instagram">
-<h2>INSTAGRAM</h2>
+<h2>Instagram</h2>
 <!-- Official Instagram embed grid: add your post/reel URLs below -->
 <div class="insta-embed-grid">
-<!-- Paste as many as you want; each is one post/reel -->
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DNBLGWgoCpr/" data-instgrm-version="14"></blockquote>
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DM8PfQUo5yM/" data-instgrm-version="14"></blockquote>
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DNVsYb6oPKU/" data-instgrm-version="14"></blockquote>
-<!-- Tip: add data-instgrm-captioned if you want captions shown -->
-<!-- <blockquote class="instagram-media" data-instgrm-permalink="..." data-instgrm-version="14" data-instgrm-captioned></blockquote> -->
+  <div class="insta-card">
+    <blockquote class="instagram-media"
+      data-instgrm-permalink="https://www.instagram.com/p/DNZ-lO4sQzM/"
+      data-instgrm-version="14"></blockquote>
+  </div>
+
+  <div class="insta-card">
+    <blockquote class="instagram-media"
+      data-instgrm-permalink="https://www.instagram.com/p/DNBLGWgoCpr/"
+      data-instgrm-version="14"></blockquote>
+  </div>
+
+  <div class="insta-card">
+    <blockquote class="instagram-media"
+      data-instgrm-permalink="https://www.instagram.com/p/DMX_Qf1ou-E/"
+      data-instgrm-version="14"></blockquote>
+  </div>
+    <div class="insta-card">
+    <blockquote class="instagram-media"
+      data-instgrm-permalink="https://www.instagram.com/p/DN5OgWsDKbH/"
+      data-instgrm-version="14"></blockquote>
+  </div>
+    <div class="insta-card">
+    <blockquote class="instagram-media"
+      data-instgrm-permalink="https://www.instagram.com/p/DN3HB7VWG5M/"
+      data-instgrm-version="14"></blockquote>
+  </div>
+    <div class="insta-card">
+    <blockquote class="instagram-media"
+      data-instgrm-permalink="https://www.instagram.com/p/DNihlaXMnfN/"
+      data-instgrm-version="14"></blockquote>
+  </div>
+    <div class="insta-card">
+    <blockquote class="instagram-media"
+      data-instgrm-permalink="https://www.instagram.com/p/DNk5A1CMvst/"
+      data-instgrm-version="14"></blockquote>
+  </div>
 </div>
 </section>
+
+<section class="partners-section" id="partners">
+  <h2>Our Partners</h2>
+  <div class="partners-grid">
+    <!-- Row 1: 4 logos (columns 1, 3, 5, 7) -->
+    <a href="https://maltagayrights.org/" class="partner-card" target="_blank" rel="noopener noreferrer">
+      <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/logo1.png"
+           alt="Partner 1" loading="lazy">
+    </a>
+    <a href="https://www.instagram.com/theflyingsaucer.cafe/" class="partner-card" target="_blank" rel="noopener noreferrer">
+      <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/logo2.png"
+           alt="Partner 2" loading="lazy">
+    </a>
+    <a href="https://97notes.com/" class="partner-card" target="_blank" rel="noopener noreferrer">
+      <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/logo3.png"
+           alt="Partner 3" loading="lazy">
+    </a>
+    <a href="https://www.facebook.com/TigullioClub/" class="partner-card" target="_blank" rel="noopener noreferrer">
+      <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/logo4.png" alt="Partner 4" loading="lazy">
+    </a>
+
+    <!-- Row 2: 3 logos (columns 2, 4, 6) -->
+    <a href="https://artsmalta.org/" class="partner-card" target="_blank" rel="noopener noreferrer">
+     <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/logo5.png" alt="Partner 5" loading="lazy">
+    </a>
+    <a href="https://www.suzieqmalta.com/" class="partner-card" target="_blank" rel="noopener noreferrer">
+      <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/logo6.png"
+           alt="Partner 6" loading="lazy">
+    </a>
+    <a href="#" class="partner-card" target="_blank" rel="noopener noreferrer">
+      <img src="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/logotransp.png"
+           alt="Partner 7" loading="lazy">
+    </a>
+  </div>
+</section>
+</br>
+</br>
+</br>
 </main>
 <!-- Sticky footer shortcut -->
 <footer class="footer-bar" id="footerBar">

@@ -10,11 +10,22 @@
 
 /* Reset-ish */
 *{box-sizing:border-box;margin:0;padding:0}
-body{
-  margin:0;
-  font-family:'Inter','Segoe UI',Arial,sans-serif;
-  background:#fff;
-  color:#232;
+body {
+margin: 0;
+  font-family: 'Inter','Segoe UI',Arial,sans-serif;
+  background: url("https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/photo-1620146095812-813e2de733b1.jpg") 
+              no-repeat center top;
+  background-size: cover;
+  background-attachment: fixed; /* keeps the image fixed while scrolling */
+}
+
+/* Optional overlay: improves text readability */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35); /* adjust darkness as needed */
+  z-index: -1;
 }
 
 /* Skip link */
@@ -129,7 +140,8 @@ body{
 
 /* Section headers */
 .shows-header,.insta-section h2{
-  font-family:'Lato',Arial,sans-serif !important;font-size:2em;color:#411b56;letter-spacing:1px;text-align:left;margin-top:2em;margin-bottom:.6em;text-shadow:0 2px 10px #ececec20
+  font-family:'Lato',Arial,sans-serif !important;font-size:2em;color:#ffffff;letter-spacing:1px;text-align:left;margin-top:2em;margin-bottom:.6em;text-shadow:0 2px 10px #ffffff
+
 }
 
 /* Date picker bar */
@@ -223,14 +235,30 @@ event-modal-meta{
 .event-modal-map{width:100%;height:220px;border-radius:12px;border:0;margin:1.2em 0}
 
 /* Instagram */
-.insta-section{margin:0 0 3.5em;padding:0 0 2em;display:flex;flex-direction:column;align-items:center}
-.insta-grid{display:flex;justify-content:center;align-items:center;width:100%;max-width:1200px;margin:0 auto 2em;border-radius:14px;overflow:hidden;box-shadow:0 3px 20px rgba(90,60,110,.07);background:#fff}
-.insta-grid iframe{width:100% !important;min-width:300px;min-height:400px;border:0;display:block}
-@media (max-width:600px){
-  .insta-grid{max-width:98vw}
-  .insta-grid iframe{width:100vw !important}
+.insta-section {
+  margin: 0 0 1.5em;
+  padding: 0 0 2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+.insta-embed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, max-content));
+  gap: 12px;
+  justify-content: center;
+}
+
+.insta-card{ width:300px; margin:0 auto; } /* match the number above */
+
+.insta-card .instagram-media,
+.insta-card blockquote.instagram-media{
+  min-width:0 !important;      /* overrides IG’s inline 326px */
+  width:100% !important;
+  max-width:100% !important;
+  margin:0 !important;
+}
 /* Footer bar */
 .footer-bar{
   position:fixed;left:0;right:0;bottom:0;background:#e6007a;text-align:center;padding:.9em 0 .7em;z-index:200;
@@ -741,8 +769,8 @@ event-modal-meta{
 .insta-embed-grid{
   /* Use grid with a min column that’s >= Instagram’s ~326px */
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); /* 3 across on desktop */
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* 3 across on desktop */
+  gap: 4px;
   width: 100%;
   max-width: 1200px;         /* your page width */
   margin: 0 auto 2em;
@@ -787,50 +815,200 @@ event-modal-meta{
   background: rgba(0, 0, 0, 0.55) !important;
 }
 
-/* === .cart-link{
-  position:relative;
+/* === Cart icon in header/nav === */
+.cart-link{
   display:flex;align-items:center;gap:8px;
   color:var(--white);
   background:none;border:0;cursor:pointer;
   height:var(--menu-height);
-  font-weight:900;text-transform:uppercase;
+  font-weight:900;text-transform:uppercase; /* matches nav weight */
 }
-
 .cart-link .cart-icon{
   width:24px;height:24px;flex:0 0 auto;
   stroke:currentColor;fill:none;display:block;
-  transition:transform var(--transition);
+}
+.cart-link .cart-count{
+  display:inline-grid;place-items:center;
+  min-width:20px;height:20px;border-radius:999px;
+  font-size:.85em;font-weight:800;line-height:1;
+  padding:0 6px;
+  border:2px solid currentColor;
+  color:currentColor;background:transparent;
+  transition:all var(--transition);
+}
+.cart-link.has-items{ color:var(--yellow); }
+.cart-link.has-items .cart-count{
+  background:var(--yellow);
+  color:#000;border-color:var(--yellow);
 }
 
-
-
-/* When cart has items -> yellow icon + show badge */
-.cart-link.has-items{ color:var(--yellow); }
-.cart-link.has-items .cart-count{ transform:scale(1); opacity:1; }
-
-/* (Optional) subtle hover micro-interaction */
-.cart-link:hover .cart-icon{ transform:translateY(-1px); }
-
-/* Mobile slide menu alignment stays tidy */
+/* Mobile slide menu alignment */
 .slide-menu .cart-link{
   display:flex;gap:10px;align-items:center;
   padding-left:18px;margin-top:8px;
 }
-
-.cart-icon-wrap {
+/* Fix: Banner title */
+.slider.fixed-hero{
   position: relative;
-  display: inline-block;
+  margin-top: var(--menu-height);
+  height: clamp(260px, 36vw, 460px);
+  max-height: none;
+  overflow: hidden;
+  border: 0;
 }
 
-.cart-icon {
-  width: 24px;
-  height: 24px;
-  display: block;
-}
-
-/* Badge is now relative to the icon, not the whole button */
-.cart-icon-wrap .cart-count {
+.fixed-hero-bg{
   position: absolute;
-  top: -6px;   /* adjust as needed */
-  right: -6px; /* adjust as needed */
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: cover;
+}
+.fixed-hero-bg::after{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.35));
+}
+
+.fixed-hero-title{
+  position:absolute;
+  left: clamp(12px, 4vw, 36px);
+  bottom: 50%;
+  transform: translateY(50%);
+  margin: 0;
+  line-height: .9;
+  font-family: 'Impact', sans-serif;
+  font-size: clamp(34px, 9vw, 110px);
+  letter-spacing: 1px;
+  color: rgba(255,255,255,.85);
+  text-transform: uppercase;
+  text-shadow: 0 3px 0 rgba(0,0,0,.25), 0 12px 32px rgba(0,0,0,.45);
+  text-align: right;
+}
+.fixed-hero-title .line1{ display:block; }
+.fixed-hero-title .line2{ display:block; font-size:2.15em; letter-spacing:.4px; }
+
+.fixed-hero .arrow,
+.fixed-hero .dots,
+.fixed-hero .cta-button{ display:none !important; }
+
+.insta-section h2 {
+  text-align: left;   /* match Upcoming Shows */
+  align-self: flex-start;  /* break out of center alignment */
+  width: 100%;        /* so it lines up nicely with the grid below */
+}
+
+/* === Instagram Carousel tweaks: show exactly 4 === */
+.insta-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 2em;
+  overflow: hidden;            /* <-- hide the 5th */
+}
+
+.insta-track {
+  --gap: 12px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - (var(--gap) * 3)) / 4);
+  gap: var(--gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 0;                  /* <-- was 6px 44px */
+  scrollbar-gutter: stable;    /* keeps layout stable when scrollbar shows */
+}
+
+.insta-track .insta-card {
+  scroll-snap-align: start;
+  width: auto;      /* let the grid control the width */
+  max-width: none;
+}
+
+/* arrows (unchanged) */
+.insta-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  border: 0; background: rgba(66,28,82,.9); color:#fff;
+  width: 34px; height: 34px; border-radius: 999px;
+  display:grid; place-items:center; cursor:pointer;
+  transition: transform .15s ease, opacity .15s ease, background .15s ease;
+}
+.insta-nav:hover { transform: translateY(-50%) scale(1.05); }
+.insta-nav:disabled { opacity:.35; cursor:default; }
+.insta-nav.prev { left: 6px; }
+.insta-nav.next { right: 6px; }
+.insta-nav svg { width: 18px; height: 18px; stroke: currentColor; fill: none; }
+
+/* Partners / Logo Garden — true 4/3 staggered layout */
+.partners-section{
+  /* was: margin: 2em auto 4em; padding: 0 0 2em; width:90%; max-width:1200px; */
+  width: 100%;          /* fill the main-wrapper width */
+  margin: 2em 0 4em;    /* same outer rhythm, no extra centering container */
+  padding: 0 0 2em;
+}
+
+.partners-section h2 {
+  font-family:'Lato',Arial,sans-serif !important;
+  font-size:2em;
+  color:#ffffff;
+  letter-spacing:1px;
+  text-align:left;
+  margin-top:2em;
+  margin-bottom:.6em;
+  text-shadow:0 2px 10px #ffffff;
+
+  border-bottom: 1px solid #fff;   /* thin white line */
+  padding-bottom: 0.9em;           /* space between text and line */
+}
+
+.partners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 20px 20px;
+  justify-items: center;
+}
+  
+
+/* Top row: auto flow fills col 1,2,3,4 → but we want 1,3,5,7.
+   Force placement for the first 4 items */
+.partners-grid .partner-card:nth-child(1){ grid-column: 1; }
+.partners-grid .partner-card:nth-child(2){ grid-column: 3; }
+.partners-grid .partner-card:nth-child(3){ grid-column: 5; }
+.partners-grid .partner-card:nth-child(4){ grid-column: 7; }
+
+/* Second row (items 5–7) → cols 2,4,6 */
+.partners-grid .partner-card:nth-child(5){ grid-column: 2; }
+.partners-grid .partner-card:nth-child(6){ grid-column: 4; }
+.partners-grid .partner-card:nth-child(7){ grid-column: 6; }
+
+.partner-card{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.partner-card img{
+  max-width: 210px;
+  max-height: 210px;
+  object-fit: contain;
+  filter: brightness(0) invert(1); /* make dark logo visible */
+  opacity: .95;
+  transition: opacity .15s ease;
+}
+.partner-card:hover img{ opacity: 1; }
+
+/* Tablet fallback */
+@media (max-width: 999px){
+  .partners-grid{
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .partners-grid .partner-card{ grid-column: auto !important; }
+}
+
+/* Mobile fallback */
+@media (max-width: 600px){
+  .partners-grid{
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

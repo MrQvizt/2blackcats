@@ -446,3 +446,106 @@ if (map) {
     applyState(mobileBtn, mobileCnt);
   });
 })();
+// instagram-carousel.js
+// Turns your Instagram grid into a carousel only when there are > 4 cards.
+// Shows exactly 4 at a time (handled by CSS) and moves ONE card per click.
+
+(function () {
+  // CHANGE THIS if your grid container uses a different class:
+  const GRID_SELECTOR = '.insta-embed-grid';
+  const MIN_FOR_CAROUSEL = 5; // keep grid if 4 or fewer
+
+  const grid = document.querySelector(GRID_SELECTOR);
+  if (!grid) return;
+
+  const cards = Array.from(grid.querySelectorAll('.insta-card'));
+  if (cards.length < MIN_FOR_CAROUSEL) return; // keep your original grid
+
+  // --- Build carousel shell
+  const carousel = document.createElement('div');
+  carousel.className = 'insta-carousel';
+
+  const track = document.createElement('div');
+  track.className = 'insta-track';
+  track.setAttribute('role', 'region');
+  track.setAttribute('aria-label', 'Instagram gallery');
+  track.tabIndex = 0; // allow keyboard arrows
+
+  // Move cards into the track
+  cards.forEach(card => track.appendChild(card));
+
+  // --- Create nav buttons
+  const mkBtn = (dir, label, pathD) => {
+    const btn = document.createElement('button');
+    btn.className = `insta-nav ${dir}`;
+    btn.type = 'button';
+    btn.setAttribute('aria-label', label);
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="${pathD}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>`;
+    return btn;
+  };
+
+  const prevBtn = mkBtn('prev', 'Previous post', 'M15 6l-6 6 6 6');
+  const nextBtn = mkBtn('next', 'Next post',     'M9 6l6 6-6 6');
+
+  // Replace grid with carousel
+  grid.replaceWith(carousel);
+  carousel.appendChild(track);
+  carousel.appendChild(prevBtn);
+  carousel.appendChild(nextBtn);
+
+  // --- Navigation: move ONE card per step
+  const oneStep = () => {
+    const first = track.querySelector('.insta-card');
+    if (!first) return 0;
+    const rect = first.getBoundingClientRect();
+    const gap = parseFloat(getComputedStyle(track).columnGap || '0');
+    return rect.width + gap;
+  };
+
+  const scrollOne = (dir = 1) => {
+    const step = oneStep();
+    if (step <= 0) return;
+    track.scrollBy({ left: dir * step, behavior: 'smooth' });
+  };
+
+  prevBtn.addEventListener('click', () => scrollOne(-1));
+  nextBtn.addEventListener('click', () => scrollOne(1));
+
+  // --- Edge-state for buttons
+  const updateNav = () => {
+    const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth - 1);
+    prevBtn.disabled = track.scrollLeft <= 0;
+    nextBtn.disabled = track.scrollLeft >= maxScroll;
+  };
+  track.addEventListener('scroll', updateNav, { passive: true });
+  window.addEventListener('resize', () => {
+    // snap to nearest card after resize so buttons are accurate
+    const step = oneStep();
+    if (step > 0) {
+      const idx = Math.round(track.scrollLeft / step);
+      track.scrollLeft = idx * step;
+    }
+    updateNav();
+  });
+  requestAnimationFrame(updateNav);
+
+  // --- Keyboard support
+  track.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); scrollOne(1); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); scrollOne(-1); }
+  });
+
+  // --- Re-process Instagram embeds after moving nodes
+  const reprocess = () => {
+    try {
+      if (window.instgrm?.Embeds?.process) {
+        window.instgrm.Embeds.process();
+      }
+    } catch (_) {}
+  };
+  reprocess();
+  setTimeout(reprocess, 600);
+})();
