@@ -549,3 +549,93 @@ if (map) {
   reprocess();
   setTimeout(reprocess, 600);
 })();
+// === Pink footer bar: step-through nav + back-to-top ===
+(() => {
+  const link   = document.getElementById('footerNavLink');
+  const arrow  = document.getElementById('footerArrow');
+  const backTx = document.getElementById('footerBack');
+
+  if (!link || !arrow || !backTx) return;
+
+  // The three stops in order
+const steps = ['shows', 'instagramstop', 'partners'];
+
+  // keep simple state on the element
+  link.dataset.stepIndex = '0';      // 0=Shows, 1=Instagram, 2=Partners
+  link.dataset.mode = 'down';        // 'down' or 'top'
+
+  const headerEl = document.querySelector('.header');
+
+  function headerOffsetPx() {
+    // Try CSS var --menu-height first, fall back to actual header height
+    const cssVal = getComputedStyle(document.documentElement).getPropertyValue('--menu-height').trim();
+    if (cssVal.endsWith('px')) return parseFloat(cssVal) || (headerEl?.offsetHeight || 0);
+    if (cssVal.endsWith('vh')) return window.innerHeight * (parseFloat(cssVal) / 100);
+    return headerEl?.offsetHeight || 0;
+  }
+
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const y = el.getBoundingClientRect().top + window.scrollY - headerOffsetPx() - 8;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }
+
+  function setUI(mode) {
+    // mode: 'down' shows arrow; 'top' shows "BACK TO TOP"
+    if (mode === 'top') {
+      arrow.style.display = 'none';
+      backTx.style.display = 'inline';
+      link.dataset.mode = 'top';
+    } else {
+      backTx.style.display = 'none';
+      arrow.style.display = 'inline';
+      link.dataset.mode = 'down';
+    }
+  }
+
+  function nearBottom() {
+    // within 2px of absolute bottom
+    return Math.ceil(window.scrollY + window.innerHeight) >= (document.documentElement.scrollHeight - 2);
+  }
+
+  // Click behavior
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    if (link.dataset.mode === 'top') {
+      // Go to top, reset cycle
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      link.dataset.stepIndex = '0';
+      setUI('down');
+      return;
+    }
+
+    // Step through sections
+    let idx = parseInt(link.dataset.stepIndex || '0', 10);
+    const targetId = steps[Math.min(idx, steps.length - 1)];
+    scrollToSection(targetId);
+
+    // Advance index; once we’ve sent you to Partners, show "BACK TO TOP"
+    if (idx < steps.length - 1) {
+      link.dataset.stepIndex = String(idx + 1);
+    } else {
+      setUI('top');
+    }
+  });
+
+  // Also track manual scrolling: if you manually reach bottom, switch to "BACK TO TOP"
+  function onScroll() {
+    if (nearBottom()) {
+      setUI('top');
+    } else if (link.dataset.mode === 'top') {
+      // If you've moved away from the very bottom, restore arrow unless we just finished the cycle
+      // (leaves the index where it was so the next click restarts from shows)
+      setUI('down');
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Initial state
+  setUI('down');
+})();

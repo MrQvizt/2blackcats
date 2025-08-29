@@ -236,8 +236,8 @@ event-modal-meta{
 
 /* Footer bar */
 .footer-bar{
-  position:fixed;left:0;right:0;bottom:0;background:#e6007a;text-align:center;padding:.9em 0 .7em;z-index:200;
-  box-shadow:0 -2px 10px rgba(100,16,77,.04);border-top:2.5px solid #fff
+  position:fixed;left:0;right:0;bottom:0;background:#e6007a;text-align:center;padding: .3em 0 .3em;z-index:200;
+  box-shadow:0 -2px 10px rgba(100,16,77,.04);border-top:0;
 }
 .footer-link{
   font-family:'Lato',Arial,sans-serif !important;color:#fff;font-size:1.44em;letter-spacing:2px;text-decoration:none;font-weight:700;text-shadow:0 2px 12px #c234ad40
@@ -247,6 +247,10 @@ event-modal-meta{
 /* Hide legacy scroll-to-top UI (kept for future use) */
 .scroll-to-top,.chevron-up{display:none !important}
 
+#footerBack {
+  color: white;
+  font-weight: 600; /* optional, to match bold arrow look */
+}
 
 .event-modal-inner {
   position: relative;
@@ -823,10 +827,10 @@ event-modal-meta{
   padding-left:18px;margin-top:8px;
 }
 /* Fix: Banner title */
-.slider.fixed-hero{
+.slider.fixed-hero {
   position: relative;
   margin-top: var(--menu-height);
-  height: clamp(260px, 36vw, 460px);
+  height: clamp(180px, 24vw, 340px); /* slightly thinner than before */
   max-height: none;
   overflow: hidden;
   border: 0;
@@ -845,21 +849,23 @@ event-modal-meta{
   background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.35));
 }
 
-.fixed-hero-title{
-  position:absolute;
+.fixed-hero-title {
+  position: absolute;
   left: clamp(12px, 4vw, 36px);
   bottom: 50%;
   transform: translateY(50%);
   margin: 0;
-  line-height: .9;
+  line-height: 0.88;                  /* slightly tighter */
   font-family: 'Impact', sans-serif;
-  font-size: clamp(34px, 9vw, 110px);
-  letter-spacing: 1px;
+  font-size: clamp(30px, 7.5vw, 90px); /* scales down more gracefully */
+  letter-spacing: 0.5px;              /* subtle refinement */
   color: rgba(255,255,255,.85);
   text-transform: uppercase;
-  text-shadow: 0 3px 0 rgba(0,0,0,.25), 0 12px 32px rgba(0,0,0,.45);
+  text-shadow: 0 3px 0 rgba(0,0,0,.25),
+               0 12px 32px rgba(0,0,0,.45);
   text-align: right;
 }
+
 .fixed-hero-title .line1{ display:block; }
 .fixed-hero-title .line2{ display:block; font-size:2.15em; letter-spacing:.4px; }
 
