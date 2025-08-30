@@ -640,10 +640,9 @@ const steps = ['shows', 'instagramstop', 'partners'];
   setUI('down');
 })();
 
-
 // === Snipcart auto-wiring for event cards ===
 document.addEventListener('DOMContentLoaded', () => {
-  const HOME_URL = window.location.origin + '/'; // use your real canonical URL
+  const HOME_URL = location.origin + '/'; // use your site root
 
   const slugify = (str) =>
     (str || '')
@@ -659,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return Number.isNaN(num) ? null : num.toFixed(2);
   };
 
-  // 1) Wire each card's button with Snipcart data-attributes
+  // 1) Auto-wire each event card’s CTA with stable Snipcart attributes
   document.querySelectorAll('.event-card').forEach((card, idx) => {
     const btn = card.querySelector('.snipcart-add-item');
     if (!btn) return;
@@ -668,29 +667,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const price = normalizePrice(card.dataset.price);
     const img = card.dataset.image || '';
     const date = card.dataset.eventDate || card.dataset.date || '';
-    if (!price) return console.warn('[Snipcart] Invalid/missing price on card:', card);
+    if (!price) return;
 
-    const idSafe = slugify(title);
-    const itemId = `${idSafe}-${date || idx}`;
+    // Unique + stable product id → title + ISO date (or index)
+    const itemId = `${slugify(title)}-${date || idx}`;
 
     btn.setAttribute('data-item-id', itemId);
     btn.setAttribute('data-item-name', title);
     btn.setAttribute('data-item-price', price);
-    btn.setAttribute('data-item-url', HOME_URL);
-    // First click adds 2
-    btn.setAttribute('data-item-quantity', '2');
-
+    btn.setAttribute('data-item-url', HOME_URL);   // required by Snipcart
+    btn.setAttribute('data-item-quantity', '2');   // first add = 2 tickets
     if (img) btn.setAttribute('data-item-image', img);
+
     const tagline = (card.dataset.tagline || '').trim();
     if (tagline) {
       btn.setAttribute('data-item-description', tagline);
+      // Mirror tagline in a read-only custom field so it shows in the cart
       btn.setAttribute('data-item-custom1-name', ' ');
       btn.setAttribute('data-item-custom1-value', tagline);
       btn.setAttribute('data-item-custom1-readonly', 'true');
     }
   });
 
-  // 2) If item already in cart, block re-adding and just open the cart
+  // 2) After Snipcart is ready, prevent re-adding & just open the cart
   const whenSnipcartReady = (fn) => {
     if (window.Snipcart && window.Snipcart.store) return fn();
     document.addEventListener('snipcart.ready', fn, { once: true });
@@ -698,27 +697,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   whenSnipcartReady(() => {
     const getItems = () => (window.Snipcart.store.getState().cart.items || []);
-    const hasProductId = (pid) => getItems().some((i) => i.productId === pid || i.id === pid);
+    const hasProductId = (pid) =>
+      getItems().some((i) => i.productId === pid || i.id === pid);
 
     const openCart = () => {
       try { window.Snipcart.api.theme.cart.open(); }
       catch { document.querySelector('.snipcart-checkout')?.click(); }
     };
 
+    // If item already exists, don’t add again—just open cart
     document.querySelectorAll('.snipcart-add-item').forEach((btn) => {
-      btn.addEventListener(
-        'click',
-        (e) => {
-          const pid = btn.getAttribute('data-item-id');
-          if (pid && hasProductId(pid)) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            openCart();
-          }
-          // else: first add proceeds with quantity=2
-        },
-        true
-      );
+      btn.addEventListener('click', (e) => {
+        const pid = btn.getAttribute('data-item-id');
+        if (!pid) return;
+        if (hasProductId(pid)) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          openCart();
+        }
+      }, true); // capture: run before Snipcart’s own listener
     });
   });
 });
