@@ -642,7 +642,7 @@ const steps = ['shows', 'instagramstop', 'partners'];
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  const pageUrl = "https://yourdomain.com/"; // Always homepage
+  const pageUrl = "https://yourdomain.com/"; // always homepage
 
   // helpers
   const slugify = (s) =>
@@ -659,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return Number.isFinite(n) ? n.toFixed(2) : null;
   };
 
-  // ----- 1) Auto-wire buttons from .event-card -----
+  // ---- 1) Auto-wire each .event-card to Snipcart
   document.querySelectorAll('.event-card').forEach((card, idx) => {
     const btn = card.querySelector('.snipcart-add-item');
     if (!btn) return;
@@ -681,26 +681,23 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.setAttribute('data-item-price', price);
     btn.setAttribute('data-item-url', pageUrl);
 
-    // Optional
+    // Recommended
     if (img) btn.setAttribute('data-item-image', img);
 
     const tagline = (card.dataset.tagline || '').trim();
     if (tagline) {
-      // detailed cart
       btn.setAttribute('data-item-description', tagline);
-      // mirror so it shows in the sidebar cart too
+      // mirror to show in sidebar cart too
       btn.setAttribute('data-item-custom1-name', ' ');
       btn.setAttribute('data-item-custom1-value', tagline);
       btn.setAttribute('data-item-custom1-readonly', 'true');
     }
 
-    // Default to 2 tickets and cap at 2
+    // Start at 2 tickets (no max cap)
     btn.setAttribute('data-item-quantity', '2');
-    btn.setAttribute('data-item-max-quantity', '2');
   });
 
-  // ----- 2) Prevent duplicates: if item already in cart, just open cart -----
-  // We wait for Snipcart to be ready, then hook button clicks.
+  // ---- 2) Prevent duplicates: if item already in cart, just open the cart
   const whenSnipcartReady = (fn) => {
     if (window.Snipcart && window.Snipcart.store) return fn();
     document.addEventListener('snipcart.ready', fn, { once: true });
@@ -708,34 +705,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
   whenSnipcartReady(() => {
     const getCartItems = () => (window.Snipcart.store.getState().cart.items || []);
-    const hasItem = (id) => getCartItems().some((i) => i.id === id);
+    const hasItem = (productId) =>
+      getCartItems().some((i) => i.id === productId || i.productId === productId);
 
     const openCart = () => {
       try {
-        // v3 API
-        window.Snipcart.api.theme.cart.open();
+        window.Snipcart.api.theme.cart.open(); // v3
       } catch {
-        // fallback: click any checkout opener
-        document.querySelector('.snipcart-checkout')?.click();
+        document.querySelector('.snipcart-checkout')?.click(); // fallback
       }
     };
 
     document.querySelectorAll('.snipcart-add-item').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const id = btn.getAttribute('data-item-id');
-        if (!id) return; // not wired? let Snipcart handle it
-
+        if (!id) return;
         if (hasItem(id)) {
-          // already in cart => don't add again; just open the cart
+          // Already in cart: don't add more, just open cart
           e.preventDefault();
           e.stopPropagation();
           openCart();
-        } else {
-          // first add will use quantity=2 and max=2 (set above)
-          // no change needed
         }
+        // Else: let Snipcart handle the add with quantity=2 (no cap in cart)
       });
     });
+  });
+});
   });
 });
 
