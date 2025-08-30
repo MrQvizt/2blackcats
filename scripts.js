@@ -643,25 +643,23 @@ const steps = ['shows', 'instagramstop', 'partners'];
 
 // === Snipcart auto-wiring for event cards ===
 document.addEventListener('DOMContentLoaded', () => {
-  const HOME_URL = 'https://yourdomain.com/'; // always use homepage for data-item-url
+  const HOME_URL = window.location.origin + '/'; // use your real canonical URL
 
   const slugify = (str) =>
     (str || '')
       .toLowerCase()
-      .normalize('NFKD')                // handle accents
-      .replace(/[\u0300-\u036f]/g, '')  // strip diacritics
-      .replace(/[^a-z0-9]+/g, '-')      // swap non-alnum -> -
-      .replace(/(^-|-$)/g, '');         // trim -
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
 
   const normalizePrice = (raw) => {
-    // Keep digits, comma, dot; then convert comma to dot; parse to number
     const cleaned = String(raw || '').replace(/[^\d.,]/g, '').replace(',', '.');
     const num = parseFloat(cleaned);
-    if (Number.isNaN(num)) return null;
-    return num.toFixed(2); // "24.00"
+    return Number.isNaN(num) ? null : num.toFixed(2);
   };
 
-  // --- 1) Auto-wire buttons from .event-card ---
+  // 1) Wire each card's button with Snipcart data-attributes
   document.querySelectorAll('.event-card').forEach((card, idx) => {
     const btn = card.querySelector('.snipcart-add-item');
     if (!btn) return;
@@ -669,47 +667,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const title = (card.dataset.title || `Event #${idx + 1}`).trim();
     const price = normalizePrice(card.dataset.price);
     const img = card.dataset.image || '';
-    const date =
-      card.dataset.eventDate || // prefer data-event-date if present
-      card.dataset.date ||      // fallback to data-date
-      '';                       // final fallback
+    const date = card.dataset.eventDate || card.dataset.date || '';
+    if (!price) return console.warn('[Snipcart] Invalid/missing price on card:', card);
 
-    // Build stable unique ID from title + date (or index)
     const idSafe = slugify(title);
     const itemId = `${idSafe}-${date || idx}`;
 
-    // Validate price
-    if (!price) {
-      console.warn('[Snipcart] Invalid/missing price on card:', card);
-      return;
-    }
-
-    // === Required fields ===
     btn.setAttribute('data-item-id', itemId);
     btn.setAttribute('data-item-name', title);
     btn.setAttribute('data-item-price', price);
     btn.setAttribute('data-item-url', HOME_URL);
-
-    // Start with 2 tickets on first add (no cap)
+    // First click adds 2
     btn.setAttribute('data-item-quantity', '2');
 
-    // === Recommended fields ===
     if (img) btn.setAttribute('data-item-image', img);
-
-    // Use data-tagline as the product description
     const tagline = (card.dataset.tagline || '').trim();
     if (tagline) {
       btn.setAttribute('data-item-description', tagline);
-
-      // Mirror tagline into a read-only custom field so it appears in the sidebar cart
-      // (Use a single space as the label to keep it label-less; change to "About" if you want a label)
       btn.setAttribute('data-item-custom1-name', ' ');
       btn.setAttribute('data-item-custom1-value', tagline);
       btn.setAttribute('data-item-custom1-readonly', 'true');
     }
   });
 
-  // --- 2) If item already in cart, block re-adding and just open the cart ---
+  // 2) If item already in cart, block re-adding and just open the cart
   const whenSnipcartReady = (fn) => {
     if (window.Snipcart && window.Snipcart.store) return fn();
     document.addEventListener('snipcart.ready', fn, { once: true });
@@ -717,36 +698,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   whenSnipcartReady(() => {
     const getItems = () => (window.Snipcart.store.getState().cart.items || []);
-    const hasProductId = (pid) =>
-      getItems().some((i) => i.productId === pid || i.id === pid); // productId is the data-item-id
+    const hasProductId = (pid) => getItems().some((i) => i.productId === pid || i.id === pid);
 
     const openCart = () => {
-      try {
-        window.Snipcart.api.theme.cart.open(); // v3 API
-      } catch {
-        document.querySelector('.snipcart-checkout')?.click(); // fallback
-      }
+      try { window.Snipcart.api.theme.cart.open(); }
+      catch { document.querySelector('.snipcart-checkout')?.click(); }
     };
 
-    // Intercept button clicks: if product already in cart, prevent add & open cart
     document.querySelectorAll('.snipcart-add-item').forEach((btn) => {
       btn.addEventListener(
         'click',
         (e) => {
           const pid = btn.getAttribute('data-item-id');
-          if (!pid) return; // not wired yet
-
-          if (hasProductId(pid)) {
+          if (pid && hasProductId(pid)) {
             e.preventDefault();
-            e.stopImmediatePropagation(); // stop Snipcart's own handler from adding again
+            e.stopImmediatePropagation();
             openCart();
           }
-          // else: first add proceeds (quantity=2), and later user can increase in cart freely
+          // else: first add proceeds with quantity=2
         },
-        true // capture phase to ensure we intercept before Snipcart
+        true
       );
     });
   });
 });
-
-
