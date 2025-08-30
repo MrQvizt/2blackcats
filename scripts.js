@@ -641,70 +641,104 @@ const steps = ['shows', 'instagramstop', 'partners'];
 })();
 
 
-// === Snipcart auto-wiring for event cards ===
 document.addEventListener('DOMContentLoaded', () => {
-  const HOME_URL = 'https://yourdomain.com/'; // always use homepage for data-item-url
+  const pageUrl = "https://yourdomain.com/"; // Always homepage
 
-  const slugify = (str) =>
-    (str || '')
+  // helpers
+  const slugify = (s) =>
+    (s || '')
       .toLowerCase()
-      .normalize('NFKD')                // handle accents
-      .replace(/[\u0300-\u036f]/g, '')  // strip diacritics
-      .replace(/[^a-z0-9]+/g, '-')      // swap non-alnum -> -
-      .replace(/(^-|-$)/g, '');         // trim -
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
 
   const normalizePrice = (raw) => {
-    // Keep digits, comma, dot; then convert comma to dot; parse to number
     const cleaned = String(raw || '').replace(/[^\d.,]/g, '').replace(',', '.');
-    const num = parseFloat(cleaned);
-    if (Number.isNaN(num)) return null;
-    return num.toFixed(2); // "24.00"
+    const n = parseFloat(cleaned);
+    return Number.isFinite(n) ? n.toFixed(2) : null;
   };
 
+  // ----- 1) Auto-wire buttons from .event-card -----
   document.querySelectorAll('.event-card').forEach((card, idx) => {
     const btn = card.querySelector('.snipcart-add-item');
     if (!btn) return;
 
     const title = (card.dataset.title || `Event #${idx + 1}`).trim();
     const price = normalizePrice(card.dataset.price);
-    const img = card.dataset.image || '';
-    const date =
-      card.dataset.eventDate || // prefer data-event-date if present
-      card.dataset.date ||      // fallback to data-date
-      '';                       // final fallback
-
-    // Build stable unique ID from title + date (or index)
-    const idSafe = slugify(title);
-    const itemId = `${idSafe}-${date || idx}`;
-
-    // Validate price
     if (!price) {
-      console.warn('[Snipcart] Invalid/missing price on card:', card);
+      console.warn('[Snipcart] Missing/invalid price on card:', card);
       return;
     }
 
-    // === Required fields ===
+    const img = card.dataset.image || '';
+    const date = card.dataset.eventDate || card.dataset.date || '';
+    const itemId = `${slugify(title)}-${date || idx}`;
+
+    // Required
     btn.setAttribute('data-item-id', itemId);
     btn.setAttribute('data-item-name', title);
     btn.setAttribute('data-item-price', price);
-    btn.setAttribute('data-item-url', HOME_URL);
+    btn.setAttribute('data-item-url', pageUrl);
 
-    // === Recommended fields ===
+    // Optional
     if (img) btn.setAttribute('data-item-image', img);
 
-    // Use data-tagline as the product description
     const tagline = (card.dataset.tagline || '').trim();
     if (tagline) {
+      // detailed cart
       btn.setAttribute('data-item-description', tagline);
-
-      // Mirror tagline into a read-only custom field so it appears in the sidebar cart
-      // (Use a single space as the label to keep it label-less; change to "About" if you want a label)
+      // mirror so it shows in the sidebar cart too
       btn.setAttribute('data-item-custom1-name', ' ');
       btn.setAttribute('data-item-custom1-value', tagline);
       btn.setAttribute('data-item-custom1-readonly', 'true');
     }
+
+    // Default to 2 tickets and cap at 2
+    btn.setAttribute('data-item-quantity', '2');
+    btn.setAttribute('data-item-max-quantity', '2');
+  });
+
+  // ----- 2) Prevent duplicates: if item already in cart, just open cart -----
+  // We wait for Snipcart to be ready, then hook button clicks.
+  const whenSnipcartReady = (fn) => {
+    if (window.Snipcart && window.Snipcart.store) return fn();
+    document.addEventListener('snipcart.ready', fn, { once: true });
+  };
+
+  whenSnipcartReady(() => {
+    const getCartItems = () => (window.Snipcart.store.getState().cart.items || []);
+    const hasItem = (id) => getCartItems().some((i) => i.id === id);
+
+    const openCart = () => {
+      try {
+        // v3 API
+        window.Snipcart.api.theme.cart.open();
+      } catch {
+        // fallback: click any checkout opener
+        document.querySelector('.snipcart-checkout')?.click();
+      }
+    };
+
+    document.querySelectorAll('.snipcart-add-item').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const id = btn.getAttribute('data-item-id');
+        if (!id) return; // not wired? let Snipcart handle it
+
+        if (hasItem(id)) {
+          // already in cart => don't add again; just open the cart
+          e.preventDefault();
+          e.stopPropagation();
+          openCart();
+        } else {
+          // first add will use quantity=2 and max=2 (set above)
+          // no change needed
+        }
+      });
+    });
   });
 });
+
 
 
 
