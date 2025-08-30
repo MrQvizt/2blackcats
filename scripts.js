@@ -639,3 +639,34 @@ const steps = ['shows', 'instagramstop', 'partners'];
   // Initial state
   setUI('down');
 })();
+
+document.addEventListener('DOMContentLoaded', () => {
+  const pageUrl = "https://yourdomain.com/"; // Always homepage
+
+  document.querySelectorAll('.event-card').forEach((card, idx) => {
+    const btn = card.querySelector('.snipcart-add-item');
+    if (!btn) return;
+
+    const title = card.dataset.title?.trim() || `Event #${idx+1}`;
+    const rawPrice = (card.dataset.price || '').replace(/[^\d.,]/g, '');
+    const price = rawPrice.replace(',', '.'); // normalize decimal
+    const img = card.dataset.image || '';
+    const date = card.dataset.eventDate || card.dataset.date || '';
+    const idSafe = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const itemId = `${idSafe}-${date || idx}`;
+
+    // Required fields
+    btn.setAttribute('data-item-id', itemId);
+    btn.setAttribute('data-item-name', title);
+    btn.setAttribute('data-item-price', price);
+    btn.setAttribute('data-item-url', pageUrl);
+
+    // Optional
+    if (img) btn.setAttribute('data-item-image', img);
+    if (card.dataset.tagline) {
+      btn.setAttribute('data-item-description', card.dataset.tagline);
+    }
+  });
+});
+
+
