@@ -661,6 +661,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return num.toFixed(2); // "24.00"
   };
 
+  // --- 1) Auto-wire buttons from .event-card ---
   document.querySelectorAll('.event-card').forEach((card, idx) => {
     const btn = card.querySelector('.snipcart-add-item');
     if (!btn) return;
@@ -689,6 +690,9 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.setAttribute('data-item-price', price);
     btn.setAttribute('data-item-url', HOME_URL);
 
+    // Start with 2 tickets on first add (no cap)
+    btn.setAttribute('data-item-quantity', '2');
+
     // === Recommended fields ===
     if (img) btn.setAttribute('data-item-image', img);
 
@@ -704,7 +708,45 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.setAttribute('data-item-custom1-readonly', 'true');
     }
   });
-});
 
+  // --- 2) If item already in cart, block re-adding and just open the cart ---
+  const whenSnipcartReady = (fn) => {
+    if (window.Snipcart && window.Snipcart.store) return fn();
+    document.addEventListener('snipcart.ready', fn, { once: true });
+  };
+
+  whenSnipcartReady(() => {
+    const getItems = () => (window.Snipcart.store.getState().cart.items || []);
+    const hasProductId = (pid) =>
+      getItems().some((i) => i.productId === pid || i.id === pid); // productId is the data-item-id
+
+    const openCart = () => {
+      try {
+        window.Snipcart.api.theme.cart.open(); // v3 API
+      } catch {
+        document.querySelector('.snipcart-checkout')?.click(); // fallback
+      }
+    };
+
+    // Intercept button clicks: if product already in cart, prevent add & open cart
+    document.querySelectorAll('.snipcart-add-item').forEach((btn) => {
+      btn.addEventListener(
+        'click',
+        (e) => {
+          const pid = btn.getAttribute('data-item-id');
+          if (!pid) return; // not wired yet
+
+          if (hasProductId(pid)) {
+            e.preventDefault();
+            e.stopImmediatePropagation(); // stop Snipcart's own handler from adding again
+            openCart();
+          }
+          // else: first add proceeds (quantity=2), and later user can increase in cart freely
+        },
+        true // capture phase to ensure we intercept before Snipcart
+      );
+    });
+  });
+});
 
 
