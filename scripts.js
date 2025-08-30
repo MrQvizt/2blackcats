@@ -640,10 +640,11 @@ const steps = ['shows', 'instagramstop', 'partners'];
   setUI('down');
 })();
 
-// === Snipcart auto-wiring for event cards ===
-document.addEventListener('DOMContentLoaded', () => {
-  const HOME_URL = location.origin + '/'; // use your site root
 
+document.addEventListener('DOMContentLoaded', () => {
+  const HOME_URL = location.origin + '/'; // required by Snipcart
+
+  // Helpers
   const slugify = (str) =>
     (str || '')
       .toLowerCase()
@@ -655,67 +656,104 @@ document.addEventListener('DOMContentLoaded', () => {
   const normalizePrice = (raw) => {
     const cleaned = String(raw || '').replace(/[^\d.,]/g, '').replace(',', '.');
     const num = parseFloat(cleaned);
-    return Number.isNaN(num) ? null : num.toFixed(2);
+    return Number.isNaN(num) ? null : num.toFixed(2); // "24.00"
   };
 
-  // 1) Auto-wire each event card’s CTA with stable Snipcart attributes
-  document.querySelectorAll('.event-card').forEach((card, idx) => {
-    const btn = card.querySelector('.snipcart-add-item');
-    if (!btn) return;
+  // 1) Auto-wire each event card’s "GET TICKETS" button
+  const wireCards = () => {
+    document.querySelectorAll('.event-card').forEach((card, idx) => {
+      const btn = card.querySelector('.snipcart-add-item');
+      if (!btn) return;
 
-    const title = (card.dataset.title || `Event #${idx + 1}`).trim();
-    const price = normalizePrice(card.dataset.price);
-    const img = card.dataset.image || '';
-    const date = card.dataset.eventDate || card.dataset.date || '';
-    if (!price) return;
+      const title = (card.dataset.title || `Event #${idx + 1}`).trim();
+      const price = normalizePrice(card.dataset.price);
+      const img   = card.dataset.image || '';
+      const date  = card.dataset.eventDate || card.dataset.date || ''; // prefer eventDate
+      const tagline = (card.dataset.tagline || '').trim();
 
-    // Unique + stable product id → title + ISO date (or index)
-    const itemId = `${slugify(title)}-${date || idx}`;
+      if (!price) {
+        console.warn('[Snipcart] Missing/invalid price on card:', card);
+        return;
+      }
 
-    btn.setAttribute('data-item-id', itemId);
-    btn.setAttribute('data-item-name', title);
-    btn.setAttribute('data-item-price', price);
-    btn.setAttribute('data-item-url', HOME_URL);   // required by Snipcart
-    btn.setAttribute('data-item-quantity', '2');   // first add = 2 tickets
-    if (img) btn.setAttribute('data-item-image', img);
+      // Stable product identity: title + date (or index fallback)
+      const productId = `${slugify(title)}-${date || idx}`;
 
-    const tagline = (card.dataset.tagline || '').trim();
-    if (tagline) {
-      btn.setAttribute('data-item-description', tagline);
-      // Mirror tagline in a read-only custom field so it shows in the cart
-      btn.setAttribute('data-item-custom1-name', ' ');
-      btn.setAttribute('data-item-custom1-value', tagline);
-      btn.setAttribute('data-item-custom1-readonly', 'true');
-    }
-  });
+      // Required
+      btn.setAttribute('data-item-id', productId);
+      btn.setAttribute('data-item-name', title);
+      btn.setAttribute('data-item-price', price);
+      btn.setAttribute('data-item-url', HOME_URL);
 
-  // 2) After Snipcart is ready, prevent re-adding & just open the cart
+      // Behavior: first add = 2 tickets; allow stacking into same line
+      btn.setAttribute('data-item-quantity', '2');
+      btn.setAttribute('data-item-stackable', 'true');
+
+      // Optional visuals/details
+      if (img) btn.setAttribute('data-item-image', img);
+      if (tagline) {
+        btn.setAttribute('data-item-description', tagline);
+        // mirror tagline in a readonly custom field so it shows in the cart
+        btn.setAttribute('data-item-custom1-name', ' ');
+        btn.setAttribute('data-item-custom1-value', tagline);
+        btn.setAttribute('data-item-custom1-readonly', 'true');
+      }
+    });
+  };
+
+  wireCards();
+
+  // 2) After Snipcart is ready, intercept re-adds and open the cart instead
   const whenSnipcartReady = (fn) => {
-    if (window.Snipcart && window.Snipcart.store) return fn();
+    if (window.Snipcart?.store) return fn();
     document.addEventListener('snipcart.ready', fn, { once: true });
   };
 
   whenSnipcartReady(() => {
-    const getItems = () => (window.Snipcart.store.getState().cart.items || []);
-    const hasProductId = (pid) =>
-      getItems().some((i) => i.productId === pid || i.id === pid);
-
+    const getItems = () => window.Snipcart.store.getState().cart.items || [];
     const openCart = () => {
       try { window.Snipcart.api.theme.cart.open(); }
       catch { document.querySelector('.snipcart-checkout')?.click(); }
     };
 
-    // If item already exists, don’t add again—just open cart
-    document.querySelectorAll('.snipcart-add-item').forEach((btn) => {
+    // Guard against very fast double-clicks while Snipcart hasn't updated yet
+    const pendingAdds = new Set();
+
+    const attachGuard = (btn) => {
+      if (btn._snipGuardAttached) return;
+      btn._snipGuardAttached = true;
+
       btn.addEventListener('click', (e) => {
         const pid = btn.getAttribute('data-item-id');
         if (!pid) return;
-        if (hasProductId(pid)) {
+
+        // If the item is already present (or pending), don't add again—open the cart
+        const alreadyInCart = getItems().some((i) => i.productId === pid);
+        if (alreadyInCart || pendingAdds.has(pid)) {
           e.preventDefault();
           e.stopImmediatePropagation();
           openCart();
+          return;
         }
-      }, true); // capture: run before Snipcart’s own listener
+
+        // First allowed add → set a short "pending" lock to swallow rapid re-clicks
+        pendingAdds.add(pid);
+        setTimeout(() => pendingAdds.delete(pid), 1500);
+      }, true); // capture phase: run before Snipcart's own listener
+    };
+
+    document.querySelectorAll('.snipcart-add-item').forEach(attachGuard);
+
+    // If buttons/cards might be injected later, observe and guard them too
+    const mo = new MutationObserver((muts) => {
+      muts.forEach((m) => {
+        m.addedNodes.forEach((n) => {
+          if (!(n instanceof Element)) return;
+          if (n.matches?.('.event-card, .snipcart-add-item')) wireCards();
+          n.querySelectorAll?.('.snipcart-add-item').forEach(attachGuard);
+        });
+      });
     });
+    mo.observe(document.documentElement, { childList: true, subtree: true });
   });
 });
