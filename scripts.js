@@ -641,119 +641,33 @@ const steps = ['shows', 'instagramstop', 'partners'];
 })();
 
 
-document.addEventListener('DOMContentLoaded', () => {
-  const HOME_URL = location.origin + '/'; // required by Snipcart
-
-  // Helpers
-  const slugify = (str) =>
-    (str || '')
-      .toLowerCase()
-      .normalize('NFKD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
-
-  const normalizePrice = (raw) => {
-    const cleaned = String(raw || '').replace(/[^\d.,]/g, '').replace(',', '.');
-    const num = parseFloat(cleaned);
-    return Number.isNaN(num) ? null : num.toFixed(2); // "24.00"
+// Prevent re-adding the same product; open cart instead
+document.addEventListener('snipcart.ready', () => {
+  const getItems = () => window.Snipcart.store.getState().cart.items || [];
+  const openCart = () => {
+    try { window.Snipcart.api.theme.cart.open(); }
+    catch { document.querySelector('.snipcart-checkout')?.click(); }
   };
 
-  // 1) Auto-wire each event card’s "GET TICKETS" button
-  const wireCards = () => {
-    document.querySelectorAll('.event-card').forEach((card, idx) => {
-      const btn = card.querySelector('.snipcart-add-item');
-      if (!btn) return;
+  // Swallow ultra-fast double-clicks too
+  const pending = new Set();
 
-      const title = (card.dataset.title || `Event #${idx + 1}`).trim();
-      const price = normalizePrice(card.dataset.price);
-      const img   = card.dataset.image || '';
-      const date  = card.dataset.eventDate || card.dataset.date || ''; // prefer eventDate
-      const tagline = (card.dataset.tagline || '').trim();
+  document.querySelectorAll('.snipcart-add-item').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      const pid = btn.getAttribute('data-item-id');
+      if (!pid) return;
 
-      if (!price) {
-        console.warn('[Snipcart] Missing/invalid price on card:', card);
+      const already = getItems().some((i) => i.productId === pid);
+      if (already || pending.has(pid)) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        openCart();
         return;
       }
 
-      // Stable product identity: title + date (or index fallback)
-      const productId = `${slugify(title)}-${date || idx}`;
-
-      // Required
-      btn.setAttribute('data-item-id', productId);
-      btn.setAttribute('data-item-name', title);
-      btn.setAttribute('data-item-price', price);
-      btn.setAttribute('data-item-url', HOME_URL);
-
-      // Behavior: first add = 2 tickets; allow stacking into same line
-      btn.setAttribute('data-item-quantity', '2');
-      btn.setAttribute('data-item-stackable', 'true');
-
-      // Optional visuals/details
-      if (img) btn.setAttribute('data-item-image', img);
-      if (tagline) {
-        btn.setAttribute('data-item-description', tagline);
-        // mirror tagline in a readonly custom field so it shows in the cart
-        btn.setAttribute('data-item-custom1-name', ' ');
-        btn.setAttribute('data-item-custom1-value', tagline);
-        btn.setAttribute('data-item-custom1-readonly', 'true');
-      }
-    });
-  };
-
-  wireCards();
-
-  // 2) After Snipcart is ready, intercept re-adds and open the cart instead
-  const whenSnipcartReady = (fn) => {
-    if (window.Snipcart?.store) return fn();
-    document.addEventListener('snipcart.ready', fn, { once: true });
-  };
-
-  whenSnipcartReady(() => {
-    const getItems = () => window.Snipcart.store.getState().cart.items || [];
-    const openCart = () => {
-      try { window.Snipcart.api.theme.cart.open(); }
-      catch { document.querySelector('.snipcart-checkout')?.click(); }
-    };
-
-    // Guard against very fast double-clicks while Snipcart hasn't updated yet
-    const pendingAdds = new Set();
-
-    const attachGuard = (btn) => {
-      if (btn._snipGuardAttached) return;
-      btn._snipGuardAttached = true;
-
-      btn.addEventListener('click', (e) => {
-        const pid = btn.getAttribute('data-item-id');
-        if (!pid) return;
-
-        // If the item is already present (or pending), don't add again—open the cart
-        const alreadyInCart = getItems().some((i) => i.productId === pid);
-        if (alreadyInCart || pendingAdds.has(pid)) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          openCart();
-          return;
-        }
-
-        // First allowed add → set a short "pending" lock to swallow rapid re-clicks
-        pendingAdds.add(pid);
-        setTimeout(() => pendingAdds.delete(pid), 1500);
-      }, true); // capture phase: run before Snipcart's own listener
-    };
-
-    document.querySelectorAll('.snipcart-add-item').forEach(attachGuard);
-
-    // If buttons/cards might be injected later, observe and guard them too
-    const mo = new MutationObserver((muts) => {
-      muts.forEach((m) => {
-        m.addedNodes.forEach((n) => {
-          if (!(n instanceof Element)) return;
-          if (n.matches?.('.event-card, .snipcart-add-item')) wireCards();
-          n.querySelectorAll?.('.snipcart-add-item').forEach(attachGuard);
-        });
-      });
-    });
-    mo.observe(document.documentElement, { childList: true, subtree: true });
+      // first allowed add: set a short lock
+      pending.add(pid);
+      setTimeout(() => pending.delete(pid), 1500);
+    }, true); // capture phase so we intercept before Snipcart's own handler
   });
 });
