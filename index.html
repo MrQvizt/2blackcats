@@ -112,53 +112,63 @@
 <!-- Grid -->
 <section class="shows-section">
 <div class="shows-grid" id="showsGrid">
-<!-- EVENT CARD 1 -->
-<article class="event-card" data-date="1 SEP 2025" data-description="A night of jaw-dropping burlesque and dazzling acts. Hosted by the fabulous Miss Velvet! This is a super long description to test the show more functionality." data-event-date="2025-08-01" data-image="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Broulesque.png" data-location="Tigullio, St. Julians" data-map="https://www.google.com/maps?q=Tigullio+Malta" data-price="€24" data-tagline="Glam, tease, and show-stopping moves" data-time="6:00 PM" data-title="BURLESQUE: LIKE NEVER BEFORE">
-<div aria-hidden="true" class="event-date">
-<span class="event-month"></span>
-<span class="event-day"></span>
-<span class="event-weekday"></span>
-</div>
-<div class="event-img" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Broulesque.png')"></div>
-<div class="event-info">
-<h3 class="event-title">BURLESQUE: LIKE NEVER BEFORE</h3>
-<p class="event-tagline">Glam, tease, and show-stopping moves</p>
-<div class="event-meta vertical">
-<span class="event-time event-pill">
-<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
-<circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"></circle>
-<path d="M10 5V10L13 12" stroke="#000" stroke-linecap="round" stroke-width="2"></path>
-</svg>
+<!-- EVENT CARD 1 (fixed) -->
+<article class="event-card"
+  data-date="1 SEP 2025"
+  data-description="A night of jaw-dropping burlesque and dazzling acts. Hosted by the fabulous Miss Velvet! This is a super long description to test the show more functionality."
+  data-event-date="2025-09-22"
+  data-image="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Broulesque.png"
+  data-location="Tigullio, St. Julians"
+  data-map="https://www.google.com/maps?q=Tigullio+Malta"
+  data-price="€24"
+  data-tagline="Glam, tease, and show-stopping moves"
+  data-time="6:00 PM"
+  data-title="BURLESQUE: LIKE NEVER BEFORE">
+  <div aria-hidden="true" class="event-date">
+    <span class="event-month"></span>
+    <span class="event-day"></span>
+    <span class="event-weekday"></span>
+  </div>
+
+  <div class="event-img" style="background-image:url('https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Broulesque.png')"></div>
+
+  <div class="event-info">
+    <h3 class="event-title">BURLESQUE: LIKE NEVER BEFORE</h3>
+    <p class="event-tagline">Glam, tease, and show-stopping moves</p>
+
+    <div class="event-meta vertical">
+      <span class="event-time event-pill">
+        <svg aria-hidden="true" class="event-icon" fill="none" height="18" viewBox="0 0 20 20" width="18">
+          <circle cx="10" cy="10" r="9" stroke="#421c52" stroke-width="2"></circle>
+          <path d="M10 5V10L13 12" stroke="#000" stroke-linecap="round" stroke-width="2"></path>
+        </svg>
         6:00 PM
       </span>
-<span class="event-location event-pill">
-<svg aria-hidden="true" class="event-icon" fill="none" height="18" viewbox="0 0 20 20" width="18">
-<path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"></path>
-<circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"></circle>
-</svg>
-<a href="https://www.facebook.com/TigullioClub/" rel="noopener" target="_blank">Tigullio</a>
-</span>
-</div>
-<button
-  class="snipcart-add-item"
-  data-item-id="BURLESQUE-LIKE-NEVER-BEFORE-01-09-25"          <!-- stable & unique: slug + date -->
+      <span class="event-location event-pill">
+        <svg aria-hidden="true" class="event-icon" fill="none" height="18" viewBox="0 0 20 20" width="18">
+          <path d="M10 19C10 19 16 12.6863 16 8.5C16 5.46243 13.5376 3 10.5 3C7.46243 3 5 5.46243 5 8.5C5 12.6863 10 19 10 19Z" stroke="#000" stroke-width="2"></path>
+          <circle cx="10.5" cy="8.5" r="2" stroke="#421c52" stroke-width="2"></circle>
+        </svg>
+        <a href="https://www.facebook.com/TigullioClub/" rel="noopener" target="_blank">Tigullio</a>
+      </span>
+    </div>
+
+    <!-- VALID Snipcart product (no comments inside the tag) -->
+  <button
+  class="event-cta snipcart-add-item"
+  data-item-id="BURLESQUE-LIKE-NEVER-BEFORE-2025-09-22"
   data-item-name="BURLESQUE: LIKE NEVER BEFORE"
-  data-item-price="24.00"                            <!-- numbers only, dot decimal -->
-  data-item-url="/"                                  <!-- the SAME page that contains this button -->
-  data-item-image="/https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Broulesque.png"              <!-- optional -->
-  data-item-description="A night of laughs"          <!-- optional -->
-
-  data-item-quantity="2"                             <!-- first add = 2 -->
-  data-item-stackable="true"                         <!-- same id merges, no duplicate line -->
-
-  data-item-custom1-name=" "                         <!-- optional: show tagline in cart -->
-  data-item-custom1-value="A night of laughs"
-  data-item-custom1-readonly="true"
->
+  data-item-price="24.00"
+  data-item-url="https://helpful-sprite-4de2bd.netlify.app/#"  
+  data-item-image="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Broulesque.png"
+  data-item-description="Glam, tease, and show-stopping moves"
+  data-item-quantity="1"
+  data-item-stackable="true">
   GET TICKETS
 </button>
-</div>
+  </div>
 </article>
+
 <!-- EVENT CARD 2 -->
 <article class="event-card" data-date="5 SEP 2025" data-description="An intimate open-mic night hosted by Niti Dhingra — new material, raw creativity, big laughs." data-event-date="2025-09-05" data-image="https://raw.githubusercontent.com/MrQvizt/2blackcats/refs/heads/main/Openmic.png" data-location="SOHO The Strand" data-map="https://sohomalta.com/locations/the-strand/" data-price="€12" data-tagline="Fresh jokes, raw talent, real laughs" data-time="6:00 PM" data-title="OPEN MIC by Niti Dhingra">
 <div aria-hidden="true" class="event-date">
